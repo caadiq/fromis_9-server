@@ -1,0 +1,3 @@
+Manifest-Version: 1.0.0
+Main-Class: com.beemer.fromis9server.Fromis9ServerApplication
+
