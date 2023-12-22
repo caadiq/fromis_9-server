@@ -57,6 +57,7 @@ cmake-build-*/
 out/
 .idea
 /src/main/resources/application.properties
+/build
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
