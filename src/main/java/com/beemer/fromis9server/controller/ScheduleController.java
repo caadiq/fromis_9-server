@@ -3,9 +3,7 @@ package com.beemer.fromis9server.controller;
 import com.beemer.fromis9server.dto.ScheduleDto;
 import com.beemer.fromis9server.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,7 +18,10 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public List<ScheduleDto> getAllSchedules() {
+    public List<ScheduleDto> getSchedulesByYearAndMonth(@RequestParam(required = false) Integer year, @RequestParam(required = false) Integer month) {
+        if (year != null && month != null) {
+            return scheduleService.getSchedulesByYearAndMonth(year, month);
+        }
         return scheduleService.getAllSchedules();
     }
 }
