@@ -24,6 +24,11 @@ public class ScheduleService {
         return schedules.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
+    public List<ScheduleDto> getSchedulesByYearAndMonth(int year, int month) {
+        List<Schedule> schedules = scheduleRepository.findByYearAndMonth(year, month);
+        return schedules.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
     private ScheduleDto convertToDto(Schedule schedule) {
         ScheduleDto dto = new ScheduleDto();
         dto.setId(schedule.getId());
