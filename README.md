@@ -12,20 +12,23 @@
 
 ## 개발 기간
 
-- 2023.12.22 ~ 
+2023.12.22 ~ 
 
 </br>
 
 ## 개발 환경
 
 - #### Language
-　　<img src="https://img.shields.io/badge/JAVA-437291?style=for-the-badge&logo=OpenJDK&logoColor=white"> 
+　　<img src="https://img.shields.io/badge/java-437291?style=for-the-badge&logo=OpenJDK&logoColor=white"> 
 
 - #### Framework
-　　<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">
+　　<img src="https://img.shields.io/badge/spring boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">
 
 - #### DataBase
-　　<img src="https://img.shields.io/badge/mariaDB-003545?style=for-the-badge&logo=mariaDB&logoColor=white">
+　　<img src="https://img.shields.io/badge/mariadb-003545?style=for-the-badge&logo=mariaDB&logoColor=white">
+
+- #### Server
+　　<img src="https://img.shields.io/badge/ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white">
 
 - #### IDE
-　　<img src="https://img.shields.io/badge/Intellij IDEA-000000?style=for-the-badge&logo=Intellij IDEA&logoColor=white">
+　　<img src="https://img.shields.io/badge/intellij idea-000000?style=for-the-badge&logo=Intellij IDEA&logoColor=white">
