@@ -5,14 +5,14 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "AlbumArt")
-public class AlbumArt {
+@Table(name = "AlbumDescription")
+public class AlbumDescription {
     @Id
     @Column(name = "albumName", nullable = false)
     private String albumName;
 
-    @Column(name = "imageUrl", nullable = false)
-    private String imageUrl;
+    @Column(name = "description", nullable = false)
+    private String description;
 
     @OneToOne
     @JoinColumn(name = "albumName", referencedColumnName = "albumName")
