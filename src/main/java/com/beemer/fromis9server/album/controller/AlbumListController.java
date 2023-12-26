@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/fromis_9")
 public class AlbumListController {
@@ -19,10 +21,12 @@ public class AlbumListController {
     }
 
     @GetMapping("/albumlist")
-    public ResponseEntity<?> getAlbumList(@RequestParam(required = false) String part) {
+    public ResponseEntity<?> getAlbumList(
+            @RequestParam(required = false) String part,
+            @RequestParam(required = false) String albumName) {
         if (part == null || part.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("'part' 파라미터가 필요합니다.");
         }
-        return ResponseEntity.ok(albumListService.getAlbumList(part));
+        return ResponseEntity.ok(albumListService.getAlbumList(part, Optional.ofNullable(albumName)));
     }
 }

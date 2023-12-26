@@ -22,8 +22,14 @@ public class Song {
     @Column(name = "lyrics", nullable = false)
     private String lyrics;
 
+    @Column(name = "songLength", nullable = false)
+    private String songLength;
+
     @Column(name = "isTitle", nullable = false)
-    private int isTitle;
+    private boolean isTitle;
+
+    @Column(name = "trackNumber", nullable = false)
+    private int trackNumber;
 
     @ManyToOne
     @JoinColumns({
