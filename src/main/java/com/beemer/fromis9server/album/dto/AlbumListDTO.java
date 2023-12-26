@@ -17,4 +17,5 @@ public class AlbumListDTO {
     private String colorSecondary;
     private AlbumArtDTO albumArt;
     private AlbumDescriptionDTO albumDescription;
+    private SongListDTO songList;
 }

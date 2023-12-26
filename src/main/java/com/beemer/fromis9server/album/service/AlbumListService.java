@@ -1,16 +1,13 @@
 package com.beemer.fromis9server.album.service;
 
-import com.beemer.fromis9server.album.dto.AlbumArtDTO;
-import com.beemer.fromis9server.album.dto.AlbumDescriptionDTO;
-import com.beemer.fromis9server.album.dto.AlbumListDTO;
+import com.beemer.fromis9server.album.dto.*;
 import com.beemer.fromis9server.album.model.AlbumList;
+import com.beemer.fromis9server.album.model.Song;
 import com.beemer.fromis9server.album.repository.AlbumListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,16 +19,25 @@ public class AlbumListService {
         this.albumListRepository = albumListRepository;
     }
 
-    public List<AlbumListDTO> getAlbumList(String part) {
+    public List<AlbumListDTO> getAlbumList(String part, Optional<String> albumName) {
         Set<String> parts = Arrays.stream(part.split(","))
                 .collect(Collectors.toSet());
 
-        return albumListRepository.findAll().stream()
-                .map(albumList -> convertToDTO(albumList, parts))
+        List<AlbumList> albumLists;
+        if (albumName.isPresent()) {
+            // 특정 앨범 이름으로 조회
+            albumLists = albumListRepository.findByAlbumName(albumName.get());
+        } else {
+            // 모든 앨범 조회
+            albumLists = albumListRepository.findAll();
+        }
+
+        return albumLists.stream()
+                .map(albumList -> convertAlbumListToDTO(albumList, parts))
                 .collect(Collectors.toList());
     }
 
-    private AlbumListDTO convertToDTO(AlbumList albumList, Set<String> parts) {
+    private AlbumListDTO convertAlbumListToDTO(AlbumList albumList, Set<String> parts) {
         AlbumListDTO albumListDTO = new AlbumListDTO();
 
         if (parts.contains("album")) {
@@ -56,6 +62,31 @@ public class AlbumListService {
             albumListDTO.setAlbumDescription(albumDescriptionDTO);
         }
 
+        if (parts.contains("songList")) {
+            SongListDTO songListDTO = new SongListDTO();
+            List<SongDTO> songDTOs = albumList.getSongList().stream()
+                    .flatMap(songList -> songList.getSong().stream())
+                    .map(this::convertSongToDTO)
+                    .sorted(Comparator.comparingInt(SongDTO::getTrackNumber)) // 트랙 번호 순으로 정렬
+                    .collect(Collectors.toList());
+            songListDTO.setSongList(songDTOs);
+            albumListDTO.setSongList(songListDTO);
+        }
+
         return albumListDTO;
+    }
+
+    private SongDTO convertSongToDTO(Song song) {
+        SongDTO songDTO = new SongDTO();
+        songDTO.setSongName(song.getSongListId().getSongName());
+        songDTO.setAlbumName(song.getSongListId().getAlbumName());
+        songDTO.setLyricist(song.getLyricist());
+        songDTO.setComposer(song.getComposer());
+        songDTO.setArranger(song.getArranger());
+        songDTO.setLyrics(song.getLyrics());
+        songDTO.setSongLength(song.getSongLength());
+        songDTO.setIsTitle(song.isTitle());
+        songDTO.setTrackNumber(song.getTrackNumber());
+        return songDTO;
     }
 }
