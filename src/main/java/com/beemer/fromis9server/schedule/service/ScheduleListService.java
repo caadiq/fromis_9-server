@@ -1,9 +1,9 @@
-package com.beemer.fromis9server.service;
+package com.beemer.fromis9server.schedule.service;
 
-import com.beemer.fromis9server.dto.ScheduleIconDTO;
-import com.beemer.fromis9server.dto.ScheduleListDTO;
-import com.beemer.fromis9server.model.ScheduleList;
-import com.beemer.fromis9server.repository.ScheduleListRepository;
+import com.beemer.fromis9server.schedule.dto.ScheduleIconDTO;
+import com.beemer.fromis9server.schedule.dto.ScheduleListDTO;
+import com.beemer.fromis9server.schedule.model.ScheduleList;
+import com.beemer.fromis9server.schedule.repository.ScheduleListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

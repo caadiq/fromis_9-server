@@ -1,4 +1,4 @@
-package com.beemer.fromis9server.model;
+package com.beemer.fromis9server.schedule.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

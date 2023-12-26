@@ -1,4 +1,4 @@
-package com.beemer.fromis9server.dto;
+package com.beemer.fromis9server.schedule.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

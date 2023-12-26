@@ -1,4 +1,4 @@
-package com.beemer.fromis9server.dto;
+package com.beemer.fromis9server.album.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

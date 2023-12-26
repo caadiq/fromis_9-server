@@ -1,6 +1,6 @@
-package com.beemer.fromis9server.repository;
+package com.beemer.fromis9server.schedule.repository;
 
-import com.beemer.fromis9server.model.ScheduleList;
+import com.beemer.fromis9server.schedule.model.ScheduleList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

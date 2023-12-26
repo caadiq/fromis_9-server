@@ -1,6 +1,6 @@
-package com.beemer.fromis9server.controller;
+package com.beemer.fromis9server.album.controller;
 
-import com.beemer.fromis9server.service.AlbumListService;
+import com.beemer.fromis9server.album.service.AlbumListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
