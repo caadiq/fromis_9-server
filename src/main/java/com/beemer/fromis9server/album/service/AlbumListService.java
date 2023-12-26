@@ -1,10 +1,10 @@
-package com.beemer.fromis9server.service;
+package com.beemer.fromis9server.album.service;
 
-import com.beemer.fromis9server.dto.AlbumArtDTO;
-import com.beemer.fromis9server.dto.AlbumDescriptionDTO;
-import com.beemer.fromis9server.dto.AlbumListDTO;
-import com.beemer.fromis9server.model.AlbumList;
-import com.beemer.fromis9server.repository.AlbumListRepository;
+import com.beemer.fromis9server.album.dto.AlbumArtDTO;
+import com.beemer.fromis9server.album.dto.AlbumDescriptionDTO;
+import com.beemer.fromis9server.album.dto.AlbumListDTO;
+import com.beemer.fromis9server.album.model.AlbumList;
+import com.beemer.fromis9server.album.repository.AlbumListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

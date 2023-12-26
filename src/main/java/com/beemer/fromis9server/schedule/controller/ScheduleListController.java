@@ -1,6 +1,6 @@
-package com.beemer.fromis9server.controller;
+package com.beemer.fromis9server.schedule.controller;
 
-import com.beemer.fromis9server.service.ScheduleListService;
+import com.beemer.fromis9server.schedule.service.ScheduleListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
