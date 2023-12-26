@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PlatformIconDto {
+public class ScheduleIconDTO {
     private String platform;
     private String imageUrl;
 }
