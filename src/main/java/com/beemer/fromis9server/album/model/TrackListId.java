@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 @Embeddable
-public class SongListId implements Serializable {
+public class TrackListId implements Serializable {
     @Column(name = "songName")
     private String songName;
 

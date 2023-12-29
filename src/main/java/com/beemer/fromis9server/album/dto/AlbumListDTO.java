@@ -13,9 +13,10 @@ public class AlbumListDTO {
     private String albumName;
     private String albumType;
     private LocalDate releaseDate;
+    private String colorMain;
     private String colorPrimary;
     private String colorSecondary;
     private AlbumArtDTO albumArt;
     private AlbumDescriptionDTO albumDescription;
-    private SongListDTO songList;
+    private TrackListDTO trackList;
 }

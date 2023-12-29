@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/fromis_9")
+@RequestMapping("/api/fromis9")
 public class AlbumListController {
     private final AlbumListService albumListService;
 
@@ -23,10 +23,12 @@ public class AlbumListController {
     @GetMapping("/albumlist")
     public ResponseEntity<?> getAlbumList(
             @RequestParam(required = false) String part,
-            @RequestParam(required = false) String albumName) {
+            @RequestParam(required = false) String albumname,
+            @RequestParam(required = false) String songname)
+    {
         if (part == null || part.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("'part' 파라미터가 필요합니다.");
         }
-        return ResponseEntity.ok(albumListService.getAlbumList(part, Optional.ofNullable(albumName)));
+        return ResponseEntity.ok(albumListService.getAlbumList(part, Optional.ofNullable(albumname), Optional.ofNullable(songname)));
     }
 }
