@@ -15,10 +15,6 @@ public class SongDTO {
     private String arranger;
     private String lyrics;
     private String songLength;
-    private boolean isTitle;
+    private boolean titleTrack;
     private int trackNumber;
-
-    public void setIsTitle(boolean isTitle) {
-        this.isTitle = isTitle;
-    }
 }

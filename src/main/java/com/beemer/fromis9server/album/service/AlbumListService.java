@@ -19,58 +19,65 @@ public class AlbumListService {
         this.albumListRepository = albumListRepository;
     }
 
-    public List<AlbumListDTO> getAlbumList(String part, Optional<String> albumName) {
-        Set<String> parts = Arrays.stream(part.split(","))
-                .collect(Collectors.toSet());
-
+    public List<AlbumListDTO> getAlbumList(String part, Optional<String> albumName, Optional<String> songName) {
+        Set<String> parts = Arrays.stream(part.split(",")).collect(Collectors.toSet());
         List<AlbumList> albumLists;
-        if (albumName.isPresent()) {
-            // 특정 앨범 이름으로 조회
-            albumLists = albumListRepository.findByAlbumName(albumName.get());
+
+        if (albumName.isPresent() && songName.isPresent()) {
+            albumLists = albumListRepository.findByAlbumNameAndSongName(albumName.get(), songName.get()); // 노래 및 앨범 이름에 해당하는 값
+        } else if (albumName.isPresent()) {
+            albumLists = albumListRepository.findByAlbumName(albumName.get()); // 앨범 이름에 해당하는 값
         } else {
-            // 모든 앨범 조회
-            albumLists = albumListRepository.findAll();
+            albumLists = albumListRepository.findAll(); // 모든 앨범
         }
 
         return albumLists.stream()
-                .map(albumList -> convertAlbumListToDTO(albumList, parts))
+                .map(albumList -> convertAlbumListToDTO(albumList, parts, songName))
                 .collect(Collectors.toList());
     }
 
-    private AlbumListDTO convertAlbumListToDTO(AlbumList albumList, Set<String> parts) {
+    private AlbumListDTO convertAlbumListToDTO(AlbumList albumList, Set<String> parts, Optional<String> songName) {
         AlbumListDTO albumListDTO = new AlbumListDTO();
 
         if (parts.contains("album")) {
             albumListDTO.setAlbumName(albumList.getAlbumName());
             albumListDTO.setAlbumType(albumList.getAlbumType());
+            albumListDTO.setColorMain(albumList.getColorMain());
             albumListDTO.setReleaseDate(albumList.getReleaseDate());
             albumListDTO.setColorPrimary(albumList.getColorPrimary());
             albumListDTO.setColorSecondary(albumList.getColorSecondary());
         }
 
-        if (parts.contains("albumArt")) {
+        if (parts.contains("art")) {
             AlbumArtDTO albumArtDTO = new AlbumArtDTO();
             albumArtDTO.setAlbumName(albumList.getAlbumArt().getAlbumName());
             albumArtDTO.setImageUrl(albumList.getAlbumArt().getImageUrl());
             albumListDTO.setAlbumArt(albumArtDTO);
         }
 
-        if (parts.contains("albumDescription")) {
+        if (parts.contains("description")) {
             AlbumDescriptionDTO albumDescriptionDTO = new AlbumDescriptionDTO();
             albumDescriptionDTO.setAlbumName(albumList.getAlbumDescription().getAlbumName());
             albumDescriptionDTO.setDescription(albumList.getAlbumDescription().getDescription());
             albumListDTO.setAlbumDescription(albumDescriptionDTO);
         }
 
-        if (parts.contains("songList")) {
-            SongListDTO songListDTO = new SongListDTO();
-            List<SongDTO> songDTOs = albumList.getSongList().stream()
-                    .flatMap(songList -> songList.getSong().stream())
+        if (parts.contains("tracklist")) {
+            TrackListDTO trackListDTO = new TrackListDTO();
+            List<SongDTO> songDTO;
+
+            songDTO = songName.map(s -> albumList.getTrackList().stream()
+                    .flatMap(trackList -> trackList.getSong().stream())
+                    .filter(song -> song.getTrackListId().getSongName().equals(s))
                     .map(this::convertSongToDTO)
-                    .sorted(Comparator.comparingInt(SongDTO::getTrackNumber)) // 트랙 번호 순으로 정렬
-                    .collect(Collectors.toList());
-            songListDTO.setSongList(songDTOs);
-            albumListDTO.setSongList(songListDTO);
+                    .collect(Collectors.toList())).orElseGet(() -> albumList.getTrackList().stream()
+                    .flatMap(trackList -> trackList.getSong().stream())
+                    .map(this::convertSongToDTO)
+                    .sorted(Comparator.comparingInt(SongDTO::getTrackNumber))
+                    .collect(Collectors.toList()));
+
+            trackListDTO.setSong(songDTO);
+            albumListDTO.setTrackList(trackListDTO);
         }
 
         return albumListDTO;
@@ -78,14 +85,14 @@ public class AlbumListService {
 
     private SongDTO convertSongToDTO(Song song) {
         SongDTO songDTO = new SongDTO();
-        songDTO.setSongName(song.getSongListId().getSongName());
-        songDTO.setAlbumName(song.getSongListId().getAlbumName());
+        songDTO.setSongName(song.getTrackListId().getSongName());
+        songDTO.setAlbumName(song.getTrackListId().getAlbumName());
         songDTO.setLyricist(song.getLyricist());
         songDTO.setComposer(song.getComposer());
         songDTO.setArranger(song.getArranger());
         songDTO.setLyrics(song.getLyrics());
         songDTO.setSongLength(song.getSongLength());
-        songDTO.setIsTitle(song.isTitle());
+        songDTO.setTitleTrack(song.isTitleTrack());
         songDTO.setTrackNumber(song.getTrackNumber());
         return songDTO;
     }

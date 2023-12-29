@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 @Setter
-public class SongListDTO {
-    private List<SongDTO> songList;
+public class TrackListDTO {
+    private List<SongDTO> song;
 }

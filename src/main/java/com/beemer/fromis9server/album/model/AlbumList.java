@@ -20,6 +20,9 @@ public class AlbumList {
     @Column(name = "releaseDate", nullable = false)
     private LocalDate releaseDate;
 
+    @Column(name = "colorMain", nullable = false)
+    private String colorMain;
+
     @Column(name = "colorPrimary", nullable = false)
     private String colorPrimary;
 
@@ -33,5 +36,5 @@ public class AlbumList {
     private AlbumDescription albumDescription;
 
     @OneToMany(mappedBy = "albumList", cascade = CascadeType.ALL)
-    private List<SongList> songList;
+    private List<TrackList> trackList;
 }

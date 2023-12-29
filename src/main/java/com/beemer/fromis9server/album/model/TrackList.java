@@ -7,15 +7,15 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "SongList")
-public class SongList {
+@Table(name = "TrackList")
+public class TrackList {
     @EmbeddedId
-    private SongListId songListId;
+    private TrackListId trackListId;
 
     @ManyToOne
     @JoinColumn(name = "albumName", referencedColumnName = "albumName", insertable = false, updatable = false)
     private AlbumList albumList;
 
-    @OneToMany(mappedBy = "songList", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "trackList", cascade = CascadeType.ALL)
     private List<Song> song;
 }

@@ -8,7 +8,7 @@ import lombok.Data;
 @Table(name = "Song")
 public class Song {
     @EmbeddedId
-    private SongListId songListId;
+    private TrackListId trackListId;
 
     @Column(name = "lyricist", nullable = false)
     private String lyricist;
@@ -25,8 +25,8 @@ public class Song {
     @Column(name = "songLength", nullable = false)
     private String songLength;
 
-    @Column(name = "isTitle", nullable = false)
-    private boolean isTitle;
+    @Column(name = "titleTrack", nullable = false)
+    private boolean titleTrack;
 
     @Column(name = "trackNumber", nullable = false)
     private int trackNumber;
@@ -36,5 +36,5 @@ public class Song {
         @JoinColumn(name = "songName", referencedColumnName = "songName", insertable = false, updatable = false),
         @JoinColumn(name = "albumName", referencedColumnName = "albumName", insertable = false, updatable = false)
     })
-    private SongList songList;
+    private TrackList trackList;
 }
