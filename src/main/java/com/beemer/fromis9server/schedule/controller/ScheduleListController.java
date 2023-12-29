@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/fromis_9")
+@RequestMapping("/api/fromis9")
 public class ScheduleListController {
     private final ScheduleListService scheduleListService;
 
