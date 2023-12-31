@@ -19,4 +19,5 @@ public class AlbumListDTO {
     private AlbumArtDTO albumArt;
     private AlbumDescriptionDTO albumDescription;
     private TrackListDTO trackList;
+    private PhotoListDTO photoList;
 }
