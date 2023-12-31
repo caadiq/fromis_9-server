@@ -37,4 +37,7 @@ public class AlbumList {
 
     @OneToMany(mappedBy = "albumList", cascade = CascadeType.ALL)
     private List<TrackList> trackList;
+
+    @OneToMany(mappedBy = "albumList", cascade = CascadeType.ALL)
+    private List<PhotoList> photoList;
 }

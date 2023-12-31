@@ -2,6 +2,7 @@ package com.beemer.fromis9server.album.service;
 
 import com.beemer.fromis9server.album.dto.*;
 import com.beemer.fromis9server.album.model.AlbumList;
+import com.beemer.fromis9server.album.model.Photo;
 import com.beemer.fromis9server.album.model.Song;
 import com.beemer.fromis9server.album.repository.AlbumListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,19 @@ public class AlbumListService {
             albumListDTO.setTrackList(trackListDTO);
         }
 
+        if (parts.contains("photolist")) {
+            PhotoListDTO photoListDTO = new PhotoListDTO();
+            List<PhotoDTO> photoDTO;
+
+            photoDTO = albumList.getPhotoList().stream()
+                    .flatMap(photoList -> photoList.getPhoto().stream())
+                    .map(this::convertPhotoToDTO)
+                    .collect(Collectors.toList());
+
+            photoListDTO.setPhoto(photoDTO);
+            albumListDTO.setPhotoList(photoListDTO);
+        }
+
         return albumListDTO;
     }
 
@@ -95,5 +109,14 @@ public class AlbumListService {
         songDTO.setTitleTrack(song.isTitleTrack());
         songDTO.setTrackNumber(song.getTrackNumber());
         return songDTO;
+    }
+
+    private PhotoDTO convertPhotoToDTO(Photo photo) {
+        PhotoDTO photoDTO = new PhotoDTO();
+        photoDTO.setId(photo.getPhotoListId().getId());
+        photoDTO.setAlbumName(photo.getPhotoList().getPhotoListId().getAlbumName());
+        photoDTO.setConcept(photo.getConcept());
+        photoDTO.setImageUrl(photo.getImageUrl());
+        return photoDTO;
     }
 }
