@@ -6,8 +6,6 @@ import com.beemer.fromis9server.youtube.service.YouTubeService;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
-import com.google.api.services.youtube.model.Video;
-import com.google.api.services.youtube.model.VideoListResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -29,7 +27,7 @@ public class YouTubeScheduler {
         this.youTubeRepository = youTubeRepository;
     }
 
-    @Scheduled(cron = "0 1,31 * * * *")
+    @Scheduled(cron = "0 1,11,21,31,41,51 * * * *")
     public void fetchYouTubeVideoList() {
         String playlistId = "UU8qO5racajmy4YgPgNJkVXg";
         String nextPageToken = null;
@@ -39,8 +37,6 @@ public class YouTubeScheduler {
                 PlaylistItemListResponse response = youTubeService.getVideoList(playlistId, nextPageToken);
                 for (PlaylistItem item : response.getItems()) {
                     String videoId = item.getContentDetails().getVideoId();
-                    VideoListResponse videoResponse = youTubeService.getVideoStatistics(videoId);
-                    Video video = videoResponse.getItems().get(0);
                     YouTubeVideoList youTubeVideoList = youTubeRepository.findByVideoId(videoId).orElse(new YouTubeVideoList());
                     youTubeVideoList.setVideoId(videoId);
                     youTubeVideoList.setTitle(item.getSnippet().getTitle());
@@ -55,8 +51,6 @@ public class YouTubeScheduler {
                     } else {
                         youTubeVideoList.setThumbnailUrl(item.getSnippet().getThumbnails().getMedium().getUrl());
                     }
-                    youTubeVideoList.setViewCount(video.getStatistics().getViewCount());
-                    youTubeVideoList.setLikeCount(video.getStatistics().getLikeCount());
                     youTubeRepository.save(youTubeVideoList);
                 }
 
