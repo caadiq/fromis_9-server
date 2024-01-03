@@ -28,14 +28,14 @@ public class YouTubeScheduler {
     }
 
     @Scheduled(cron = "0 1,11,21,31,41,51 * * * *")
-    public void fetchYouTubeVideoList() {
+    public void fetchFromis9VideoList() {
         String playlistId = "UU8qO5racajmy4YgPgNJkVXg";
         fetchPlaylist(playlistId);
     }
 
     @Scheduled(cron = "0 1 18 * * *")
-    public void fetchYouTubeMVList() {
-        String playlistId = "PLfO7cKwA7IXXZN5fuDSkb8vTmSaG_NzHO";
+    public void fetchHybeVideoList() {
+        String playlistId = "PL_Cqw69_m_yyAZ1QABPigf6hqpSzMYsBT";
         fetchPlaylist(playlistId);
     }
 
