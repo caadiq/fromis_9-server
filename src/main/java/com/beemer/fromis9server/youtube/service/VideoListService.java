@@ -4,7 +4,7 @@ import com.beemer.fromis9server.youtube.dto.VideoDTO;
 import com.beemer.fromis9server.youtube.dto.VideoListDTO;
 import com.beemer.fromis9server.youtube.dto.VideoPageDTO;
 import com.beemer.fromis9server.youtube.model.YouTubeVideoList;
-import com.beemer.fromis9server.youtube.repository.YouTubeRepository;
+import com.beemer.fromis9server.youtube.repository.YouTubeVideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,15 +17,28 @@ import java.util.stream.Collectors;
 
 @Service
 public class VideoListService {
-    private final YouTubeRepository youTubeRepository;
+    private final YouTubeVideoRepository youTubeVideoRepository;
 
     @Autowired
-    public VideoListService(YouTubeRepository youTubeRepository) {
-        this.youTubeRepository = youTubeRepository;
+    public VideoListService(YouTubeVideoRepository youTubeVideoRepository) {
+        this.youTubeVideoRepository = youTubeVideoRepository;
     }
 
-    public ResponseEntity<?> getVideoList(Pageable pageable) {
-        Page<YouTubeVideoList> page = youTubeRepository.findAll(pageable);
+    public ResponseEntity<?> getVideoList(Pageable pageable, String type, String search) {
+        Page<YouTubeVideoList> page;
+
+        if (!search.isEmpty()) {
+            page = youTubeVideoRepository.findByTitle(search, pageable);
+        } else {
+            page = switch (type) {
+                case "mv" -> youTubeVideoRepository.findMV(pageable);
+                case "channel9" -> youTubeVideoRepository.findChannel9(pageable);
+                case "fm124" -> youTubeVideoRepository.findFM124(pageable);
+                case "9log" -> youTubeVideoRepository.find9log(pageable);
+                case "fromisoda" -> youTubeVideoRepository.findFromisoda(pageable);
+                default -> youTubeVideoRepository.findAll(pageable);
+            };
+        }
 
         if (page.getContent().isEmpty() && page.getTotalElements() > 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("영상이 없습니다.");

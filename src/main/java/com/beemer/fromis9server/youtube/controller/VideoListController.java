@@ -23,13 +23,14 @@ public class VideoListController {
 
     @GetMapping("/videolist")
     public ResponseEntity<?> getVideoList(
+            @RequestParam(defaultValue = "all") String type,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int limit,
-            @RequestParam(defaultValue = "publishedAt") String sort) {
-
+            @RequestParam(defaultValue = "") String search)
+    {
         limit = Math.max(1, Math.min(limit, 50));
-        Pageable pageable = PageRequest.of(page, limit, Sort.by(sort).descending());
+        Pageable pageable = PageRequest.of(page, limit, Sort.by("publishedAt").descending());
 
-        return videoListService.getVideoList(pageable);
+        return videoListService.getVideoList(pageable, type, search);
     }
 }
