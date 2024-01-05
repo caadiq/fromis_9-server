@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +29,10 @@ public class VideoListService {
         Page<YouTubeVideoList> page;
 
         if (!search.isEmpty()) {
-            page = youTubeVideoRepository.findByTitle(search, pageable);
+            if (Objects.equals(type, "all"))
+                page = youTubeVideoRepository.findByTitle(search, pageable);
+            else
+                page = youTubeVideoRepository.findByTitleAndType(search, type, pageable);
         } else {
             page = switch (type) {
                 case "mv" -> youTubeVideoRepository.findMV(pageable);
