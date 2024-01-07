@@ -36,7 +36,7 @@ public interface YouTubeVideoRepository extends JpaRepository<YouTubeVideoList, 
     Page<YouTubeVideoList> findByTitle(String title, Pageable pageable);
 
     @Query("SELECT v FROM YouTubeVideoList v WHERE (" +
-            "(:type = 'mv' AND (v.title LIKE '%MV%' OR v.title LIKE '%M/V%') AND LOWER(v.title) NOT LIKE '%teaser%' AND LOWER(v.title) NOT LIKE '%reaction%' AND LOWER(v.title) NOT LIKE '%making%' AND LOWER(v.title) NOT LIKE '%behind%') OR " +
+            "(:type = 'mv' AND (v.title LIKE '%MV%' OR v.title LIKE '%M/V%') AND LOWER(v.title) NOT LIKE '%teaser%' AND LOWER(v.title) NOT LIKE '%reaction%' AND LOWER(v.title) NOT LIKE '%making%' AND LOWER(v.title) NOT LIKE '%behind%' AND LOWER(v.title) NOT LIKE '%비하인드%' AND LOWER(v.title) NOT LIKE '%리액션%' AND LOWER(v.title) NOT LIKE '%촬영%') OR " +
             "(:type = 'channel9' AND (LOWER(v.title) LIKE '%channel_9%' OR LOWER(v.title) LIKE '%ch.9%')) OR " +
             "(:type = 'fm124' AND LOWER(v.title) LIKE '%fm_1.24%') OR " +
             "(:type = '9log' AND LOWER(v.title) LIKE '%9_log%') OR " +
