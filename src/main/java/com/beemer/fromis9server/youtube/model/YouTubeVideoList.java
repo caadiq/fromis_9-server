@@ -15,6 +15,5 @@ public class YouTubeVideoList {
     private String videoId;
     private LocalDateTime publishedAt;
     private String title;
-    private String description;
     private String thumbnailUrl;
 }

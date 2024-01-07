@@ -13,6 +13,5 @@ public class VideoDTO {
     private String videoId;
     private LocalDateTime publishedAt;
     private String title;
-    private String description;
     private String thumbnailUrl;
 }

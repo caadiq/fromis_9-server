@@ -53,7 +53,6 @@ public class VideoListService {
                         video.getVideoId(),
                         video.getPublishedAt(),
                         video.getTitle(),
-                        video.getDescription(),
                         video.getThumbnailUrl()))
                 .collect(Collectors.toList());
 

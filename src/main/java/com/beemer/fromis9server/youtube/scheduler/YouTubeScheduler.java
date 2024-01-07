@@ -59,7 +59,6 @@ public class YouTubeScheduler {
 
         entity.setVideoId(videoId);
         entity.setTitle(item.getSnippet().getTitle());
-        entity.setDescription(item.getSnippet().getDescription());
 
         DateTime dateTime = item.getContentDetails().getVideoPublishedAt();
         Instant instant = Instant.ofEpochMilli(dateTime.getValue());
