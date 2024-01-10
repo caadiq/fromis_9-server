@@ -22,6 +22,9 @@ public class ScheduleList {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @Column(name = "url")
+    private String url;
+
     @ManyToOne
     @JoinColumn(name = "platform", referencedColumnName = "platform")
     private ScheduleIcon scheduleIcon;
