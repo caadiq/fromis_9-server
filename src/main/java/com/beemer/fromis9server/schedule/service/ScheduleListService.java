@@ -30,6 +30,7 @@ public class ScheduleListService {
         scheduleListDTO.setDateTime(scheduleList.getDateTime());
         scheduleListDTO.setSchedule(scheduleList.getSchedule());
         scheduleListDTO.setDescription(scheduleList.getDescription());
+        scheduleListDTO.setUrl(scheduleList.getUrl());
 
         if (scheduleList.getScheduleIcon() != null) {
             ScheduleIconDTO scheduleIconDTO = new ScheduleIconDTO();

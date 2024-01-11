@@ -15,6 +15,7 @@ public class ScheduleListDTO {
     private LocalDateTime dateTime;
     private String schedule;
     private String description;
+    private String url;
     @JsonProperty("icon")
     private ScheduleIconDTO scheduleIconDTO;
 }

@@ -31,6 +31,9 @@ public class Song {
     @Column(name = "trackNumber", nullable = false)
     private int trackNumber;
 
+    @Column(name = "videoId", nullable = false)
+    private String videoId;
+
     @ManyToOne
     @JoinColumns({
         @JoinColumn(name = "songName", referencedColumnName = "songName", insertable = false, updatable = false),
