@@ -17,4 +17,5 @@ public class SongDTO {
     private String songLength;
     private boolean titleTrack;
     private int trackNumber;
+    private String videoId;
 }

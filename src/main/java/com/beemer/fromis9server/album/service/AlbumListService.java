@@ -108,6 +108,7 @@ public class AlbumListService {
         songDTO.setSongLength(song.getSongLength());
         songDTO.setTitleTrack(song.isTitleTrack());
         songDTO.setTrackNumber(song.getTrackNumber());
+        songDTO.setVideoId(song.getVideoId());
         return songDTO;
     }
 
