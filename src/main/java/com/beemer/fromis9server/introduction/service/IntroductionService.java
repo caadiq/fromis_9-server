@@ -55,7 +55,7 @@ public class IntroductionService {
                     dto.setImageUrl(member.getImageUrl());
                     dto.setBirth(member.getBirth());
                     dto.setPosition(member.getPosition());
-                    dto.setInstagram(member.getInstagram());
+                    dto.setBlood(member.getBlood());
                     return dto;
                 }).collect(Collectors.toList());
 
