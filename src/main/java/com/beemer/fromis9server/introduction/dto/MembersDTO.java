@@ -12,5 +12,5 @@ public class MembersDTO {
     private String imageUrl;
     private LocalDate birth;
     private String position;
-    private String instagram;
+    private String blood;
 }

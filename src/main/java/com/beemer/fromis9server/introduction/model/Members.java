@@ -25,6 +25,6 @@ public class Members {
     @Column(name = "position", nullable = false)
     private String position;
 
-    @Column(name = "instagram", nullable = false)
-    private String instagram;
+    @Column(name = "blood", nullable = false)
+    private String blood;
 }
