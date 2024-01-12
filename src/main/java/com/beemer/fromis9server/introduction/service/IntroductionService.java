@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,25 +34,21 @@ public class IntroductionService {
     }
 
     public IntroductionDTO getIntroduction() {
-        List<BannerImages> bannerImagesList = bannerImagesRepository.findAll();
-        List<BannerImagesDTO> bannerImagesDTOList = bannerImagesList.stream()
+        List<BannerImages> bannerImages = bannerImagesRepository.findAll();
+        List<BannerImagesDTO> bannerImagesDTO = bannerImages.stream()
                 .map(bannerImage -> {
                     BannerImagesDTO dto = new BannerImagesDTO();
                     dto.setImageUrl(bannerImage.getImageUrl());
                     return dto;
-                })
-                .collect(Collectors.toList());
-
-        BannerDTO bannerDTO = new BannerDTO();
-        bannerDTO.setImageCount(bannerImagesDTOList.size());
-        bannerDTO.setBannerImages(bannerImagesDTOList);
+                }).collect(Collectors.toList());
 
         DebutDate debutDateEntity = debutDateRepository.findAll().get(0);
         DebutDateDTO debutDateDTO = new DebutDateDTO();
         debutDateDTO.setDebutDate(debutDateEntity.getDebutDate());
 
-        List<Members> membersList = membersRepository.findAll();
-        List<MembersDTO> membersDTOList = membersList.stream()
+        List<Members> members = membersRepository.findAll();
+        List<MembersDTO> membersDTO = members.stream()
+                .sorted(Comparator.comparing(Members::getBirth))
                 .map(member -> {
                     MembersDTO dto = new MembersDTO();
                     dto.setName(member.getName());
@@ -60,15 +57,14 @@ public class IntroductionService {
                     dto.setPosition(member.getPosition());
                     dto.setInstagram(member.getInstagram());
                     return dto;
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
 
-        IntroductionDTO introductionDTO = new IntroductionDTO();
-        introductionDTO.setBanner(bannerDTO);
-        introductionDTO.setDebutDate(debutDateDTO);
-        introductionDTO.setMembers(membersDTOList);
+        IntroductionDTO responseDTO = new IntroductionDTO();
+        responseDTO.setBannerImages(bannerImagesDTO);
+        responseDTO.setDebutDate(debutDateDTO);
+        responseDTO.setMembers(membersDTO);
 
-        return introductionDTO;
+        return responseDTO;
     }
 
     public void updateMemberProfileImage() {
@@ -90,6 +86,8 @@ public class IntroductionService {
                 memberEntity.setImageUrl(imageUrl);
                 membersRepository.save(memberEntity);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+
+        }
     }
 }
