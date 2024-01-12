@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 public class IntroductionDTO {
-    private BannerDTO banner;
+    private List<BannerImagesDTO> bannerImages;
     private DebutDateDTO debutDate;
     private List<MembersDTO> members;
 }
