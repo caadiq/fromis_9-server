@@ -14,7 +14,7 @@ class YouTubeController(private val youTubeService: YouTubeService) {
 
     @GetMapping("/list")
     fun getVideoList(
-        @RequestParam(defaultValue = "all") playlist: String,
+        @RequestParam playlist: String?,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") limit: Int,
         @RequestParam query: String?

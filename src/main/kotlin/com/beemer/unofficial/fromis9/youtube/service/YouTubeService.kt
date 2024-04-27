@@ -33,7 +33,7 @@ class YouTubeService(private val youTubeRepository: YouTubeRepository) {
 
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 
-    fun getVideoList(playlist: String, page: Int, limit: Int, query: String?) : ResponseEntity<YouTubeListDto> {
+    fun getVideoList(playlist: String?, page: Int, limit: Int, query: String?) : ResponseEntity<YouTubeListDto> {
         val limitAdjusted = 1.coerceAtLeast(50.coerceAtMost(limit))
         val pageable = PageRequest.of(page, limitAdjusted, Sort.by("publishedAt").descending())
 
