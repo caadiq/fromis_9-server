@@ -20,6 +20,7 @@ enum class ErrorCode(
      * ex) 존재하지 않는 데이터를 조회할 때
      */
     ALBUM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 앨범이 존재하지 않습니다."),
+    SONG_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 곡이 존재하지 않습니다."),
 
 
     /**

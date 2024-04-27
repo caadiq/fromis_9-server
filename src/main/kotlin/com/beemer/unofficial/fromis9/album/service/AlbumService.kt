@@ -1,9 +1,6 @@
 package com.beemer.unofficial.fromis9.album.service
 
-import com.beemer.unofficial.fromis9.album.dto.AlbumDetailsDto
-import com.beemer.unofficial.fromis9.album.dto.AlbumListDto
-import com.beemer.unofficial.fromis9.album.dto.PhotoListDto
-import com.beemer.unofficial.fromis9.album.dto.TrackListDto
+import com.beemer.unofficial.fromis9.album.dto.*
 import com.beemer.unofficial.fromis9.album.repository.AlbumRepository
 import com.beemer.unofficial.fromis9.album.repository.PhotoRepository
 import com.beemer.unofficial.fromis9.album.repository.SongRepository
@@ -70,5 +67,24 @@ class AlbumService(
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(albumDetails)
+    }
+
+    // 노래 상세
+    fun getSongDetails(songName: String) : ResponseEntity<SongDetailsDto> {
+        val song = songRepository.findById(songName).orElseThrow {
+            CustomException(ErrorCode.SONG_NOT_FOUND)
+        }
+
+        val songDetails = song.run {
+            SongDetailsDto(
+                lyricist = lyricist,
+                composer = composer,
+                arranger = arranger,
+                lyrics = lyrics,
+                videoId = videoId
+            )
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(songDetails)
     }
 }
