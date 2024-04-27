@@ -12,6 +12,7 @@ enum class ErrorCode(
      * ex) 필수 요청 파라미터가 누락된 경우
      */
     INVALID_FIELD(HttpStatus.BAD_REQUEST, "잘못된 필드입니다."),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "잘못된 파라미터입니다."),
 
 
     /**
