@@ -22,6 +22,7 @@ enum class ErrorCode(
      */
     ALBUM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 앨범이 존재하지 않습니다."),
     SONG_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 곡이 존재하지 않습니다."),
+    VIDEO_NOT_FOUND(HttpStatus.NOT_FOUND, "영상이 존재하지 않습니다."),
 
 
     /**
