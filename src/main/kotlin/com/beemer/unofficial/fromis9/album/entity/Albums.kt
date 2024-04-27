@@ -1,8 +1,10 @@
 package com.beemer.unofficial.fromis9.album.entity
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDate
 
@@ -32,5 +34,11 @@ data class Albums(
     val colorPrimary: String,
 
     @Column(name = "color_secondary", nullable = false)
-    val colorSecondary: String
+    val colorSecondary: String,
+
+    @OneToMany(mappedBy = "albumName", cascade = [CascadeType.ALL])
+    val songs: List<Songs>,
+
+    @OneToMany(mappedBy = "albumName", cascade = [CascadeType.ALL])
+    val photos: List<Photos>
 )
