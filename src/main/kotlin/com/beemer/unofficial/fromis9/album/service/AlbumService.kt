@@ -49,7 +49,7 @@ class AlbumService(
             )
         }
 
-        val trackList = songRepository.findByAlbumName(album).map {
+        val trackList = songRepository.findByAlbumNameOrderByTrack(album).map {
             TrackListDto(
                 trackNumber = it.track,
                 songName = it.songName,

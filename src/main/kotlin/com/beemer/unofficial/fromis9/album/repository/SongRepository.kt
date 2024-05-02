@@ -5,5 +5,5 @@ import com.beemer.unofficial.fromis9.album.entity.Songs
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface SongRepository : JpaRepository<Songs, String> {
-    fun findByAlbumName(albums: Albums): List<Songs>
+    fun findByAlbumNameOrderByTrack(albums: Albums): List<Songs>
 }
