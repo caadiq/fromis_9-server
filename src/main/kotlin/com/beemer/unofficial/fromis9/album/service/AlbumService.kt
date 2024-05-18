@@ -54,7 +54,8 @@ class AlbumService(
                 trackNumber = it.track,
                 songName = it.songName,
                 titleTrack = it.title,
-                length = it.length
+                length = it.length,
+                colorMain = it.albumName.colorMain
             )
         }
 
