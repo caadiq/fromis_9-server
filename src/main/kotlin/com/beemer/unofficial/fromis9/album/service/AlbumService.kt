@@ -54,8 +54,7 @@ class AlbumService(
                 trackNumber = it.track,
                 songName = it.songName,
                 titleTrack = it.title,
-                length = it.length,
-                colorMain = it.albumName.colorMain
+                length = it.length
             )
         }
 
@@ -82,9 +81,7 @@ class AlbumService(
                 composer = composer,
                 arranger = arranger,
                 lyrics = lyrics,
-                videoId = videoId,
-                colorPrimary = albumName.colorPrimary,
-                colorSecondary = albumName.colorSecondary
+                videoId = videoId
             )
         }
 

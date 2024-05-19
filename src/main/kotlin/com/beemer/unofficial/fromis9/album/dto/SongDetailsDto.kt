@@ -5,7 +5,5 @@ data class SongDetailsDto(
     val composer: String,
     val arranger: String?,
     val lyrics: String,
-    val videoId: String,
-    val colorPrimary: String,
-    val colorSecondary: String
+    val videoId: String
 )
