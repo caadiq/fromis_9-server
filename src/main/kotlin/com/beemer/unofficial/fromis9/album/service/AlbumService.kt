@@ -82,7 +82,9 @@ class AlbumService(
                 composer = composer,
                 arranger = arranger,
                 lyrics = lyrics,
-                videoId = videoId
+                videoId = videoId,
+                colorPrimary = albumName.colorPrimary,
+                colorSecondary = albumName.colorSecondary
             )
         }
 
