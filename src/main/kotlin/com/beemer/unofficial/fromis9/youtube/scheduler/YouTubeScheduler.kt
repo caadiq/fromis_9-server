@@ -19,7 +19,7 @@ class YouTubeScheduler(private val youtubeService: YouTubeService) {
     }
 
     @Scheduled(cron = "0 2,32 * * * *")
-    fun getVideoTetails() {
+    fun getVideoDetails() {
         youtubeService.getVideoDetails()
     }
 }
