@@ -1,9 +1,6 @@
 package com.beemer.unofficial.fromis9.youtube.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
@@ -25,9 +22,6 @@ data class YouTubeVideos(
     @Column(name = "description", nullable = false)
     val description: String,
 
-    @Column(name = "length")
-    var length: Int?,
-
-    @Column(name = "views")
-    var views: Int?
+    @OneToOne(mappedBy = "video", cascade = [CascadeType.ALL])
+    var details: YouTubeVideoDetails? = null
 )

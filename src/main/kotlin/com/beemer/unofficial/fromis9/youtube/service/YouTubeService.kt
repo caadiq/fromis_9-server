@@ -3,8 +3,9 @@ package com.beemer.unofficial.fromis9.youtube.service
 import com.beemer.unofficial.fromis9.common.exception.CustomException
 import com.beemer.unofficial.fromis9.common.exception.ErrorCode
 import com.beemer.unofficial.fromis9.youtube.dto.*
+import com.beemer.unofficial.fromis9.youtube.entity.YouTubeVideoDetails
 import com.beemer.unofficial.fromis9.youtube.entity.YouTubeVideos
-import com.beemer.unofficial.fromis9.youtube.repository.YouTubeRepository
+import com.beemer.unofficial.fromis9.youtube.repository.YouTubeVideoRepository
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.youtube.YouTube
@@ -27,7 +28,7 @@ enum class YouTubeChannel(val playlistId: String) {
 
 @Service
 class YouTubeService(
-    private val youTubeRepository: YouTubeRepository,
+    private val youTubeVideoRepository: YouTubeVideoRepository,
     private val webClient: WebClient
 ) {
     @Value("\${youtube.api.key}")
@@ -40,7 +41,7 @@ class YouTubeService(
         val limitAdjusted = 1.coerceAtLeast(50.coerceAtMost(limit))
         val pageable = PageRequest.of(page, limitAdjusted, Sort.by("publishedAt").descending())
 
-        val youTubeVideos = youTubeRepository.findByTitleAndPlaylist(pageable, query, playlist)
+        val youTubeVideos = youTubeVideoRepository.findByTitleAndPlaylist(pageable, query, playlist)
 
         if (youTubeVideos.content.isEmpty() && youTubeVideos.totalElements > 0) {
             throw CustomException(ErrorCode.VIDEO_NOT_FOUND)
@@ -59,8 +60,8 @@ class YouTubeService(
                 it.thumbnail,
                 it.publishedAt,
                 it.description,
-                it.length,
-                it.views
+                it.details?.length,
+                it.details?.views
             )
         }
 
@@ -92,9 +93,7 @@ class YouTubeService(
                     title,
                     thumbnail,
                     publishedAt,
-                    description,
-                    null,
-                    null
+                    description
                 )
             }
 
@@ -103,7 +102,7 @@ class YouTubeService(
             nextPageToken = response.nextPageToken
         } while (!nextPageToken.isNullOrEmpty())
 
-        youTubeRepository.saveAll(youTubeVideoList)
+        youTubeVideoRepository.saveAll(youTubeVideoList)
     }
 
     private fun getPlayListVideos(playlistId: String, pageToken: String?): PlaylistItemListResponse {
@@ -133,7 +132,7 @@ class YouTubeService(
     fun getVideoDetails() {
         val url = "$fastApiUrl/youtube"
 
-        val videoList: List<VideoDetailsRequestDto> = youTubeRepository.findAll().map {
+        val videoList: List<VideoDetailsRequestDto> = youTubeVideoRepository.findAll().map {
             VideoDetailsRequestDto(it.videoId)
         }
 
@@ -146,12 +145,18 @@ class YouTubeService(
     }
 
     private fun saveVideoDetails(dto: VideoDetailsResponseDto) {
-        val video = youTubeRepository.findById(dto.videoId)
+        val video = youTubeVideoRepository.findById(dto.videoId)
             .orElseThrow { CustomException(ErrorCode.VIDEO_NOT_FOUND) }
 
-        video.length = dto.length
-        video.views = dto.views
+        val details = YouTubeVideoDetails(
+            dto.videoId,
+            dto.length,
+            dto.views,
+            video
+        )
 
-        youTubeRepository.save(video)
+        video.details = details
+
+        youTubeVideoRepository.save(video)
     }
 }
