@@ -20,5 +20,14 @@ data class YouTubeVideos(
     val thumbnail: String,
 
     @Column(name = "published_at", nullable = false)
-    val publishedAt: LocalDateTime
+    val publishedAt: LocalDateTime,
+
+    @Column(name = "description", nullable = false)
+    val description: String,
+
+    @Column(name = "length")
+    var length: Int?,
+
+    @Column(name = "views")
+    var views: Int?
 )
