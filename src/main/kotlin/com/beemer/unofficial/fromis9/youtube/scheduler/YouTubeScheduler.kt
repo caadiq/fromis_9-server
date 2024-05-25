@@ -17,4 +17,9 @@ class YouTubeScheduler(private val youtubeService: YouTubeService) {
     fun fetchHybeLabelsPlaylist() {
         youtubeService.fetchYouTubePlaylist(YouTubeChannel.HYBE_LABELS.playlistId)
     }
+
+    @Scheduled(cron = "0 2,32, * * * *")
+    fun getVideoTetails() {
+        youtubeService.getVideoDetails()
+    }
 }

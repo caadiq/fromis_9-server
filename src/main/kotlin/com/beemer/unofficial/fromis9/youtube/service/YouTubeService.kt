@@ -2,24 +2,23 @@ package com.beemer.unofficial.fromis9.youtube.service
 
 import com.beemer.unofficial.fromis9.common.exception.CustomException
 import com.beemer.unofficial.fromis9.common.exception.ErrorCode
-import com.beemer.unofficial.fromis9.youtube.dto.YouTubeDto
-import com.beemer.unofficial.fromis9.youtube.dto.YouTubeListDto
-import com.beemer.unofficial.fromis9.youtube.dto.YouTubePageDto
+import com.beemer.unofficial.fromis9.youtube.dto.*
 import com.beemer.unofficial.fromis9.youtube.entity.YouTubeVideos
 import com.beemer.unofficial.fromis9.youtube.repository.YouTubeRepository
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.youtube.YouTube
 import com.google.api.services.youtube.model.PlaylistItemListResponse
+import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.web.reactive.function.client.WebClient
 import java.time.Instant
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 enum class YouTubeChannel(val playlistId: String) {
     FROMIS_9("UU8qO5racajmy4YgPgNJkVXg"),
@@ -27,11 +26,15 @@ enum class YouTubeChannel(val playlistId: String) {
 }
 
 @Service
-class YouTubeService(private val youTubeRepository: YouTubeRepository) {
+class YouTubeService(
+    private val youTubeRepository: YouTubeRepository,
+    private val webClient: WebClient
+) {
     @Value("\${youtube.api.key}")
     private lateinit var apiKey: String
 
-    private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+    @Value("\${fast.api.url}")
+    private lateinit var fastApiUrl: String
 
     fun getVideoList(playlist: String?, page: Int, limit: Int, query: String?) : ResponseEntity<YouTubeListDto> {
         val limitAdjusted = 1.coerceAtLeast(50.coerceAtMost(limit))
@@ -54,13 +57,17 @@ class YouTubeService(private val youTubeRepository: YouTubeRepository) {
                 it.videoId,
                 it.title,
                 it.thumbnail,
-                it.publishedAt.format(dateTimeFormatter)
+                it.publishedAt,
+                it.description,
+                it.length,
+                it.views
             )
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(YouTubeListDto(pages, videos))
     }
 
+    @Transactional
     fun fetchYouTubePlaylist(playlistId: String) {
         var nextPageToken: String? = null
         val youTubeVideoList = mutableListOf<YouTubeVideos>()
@@ -74,17 +81,20 @@ class YouTubeService(private val youTubeRepository: YouTubeRepository) {
                 val thumbnail = item.snippet.thumbnails.run {
                     maxres?.url ?: high?.url ?: medium?.url ?: default.url
                 }
-
                 val publishedAt = Instant.ofEpochMilli(item.contentDetails.videoPublishedAt.value)
                     .atZone(ZoneId.of("UTC"))
                     .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
                     .toLocalDateTime()
+                val description = item.snippet.description
 
                 YouTubeVideos(
                     videoId,
                     title,
                     thumbnail,
-                    publishedAt
+                    publishedAt,
+                    description,
+                    null,
+                    null
                 )
             }
 
@@ -117,5 +127,31 @@ class YouTubeService(private val youTubeRepository: YouTubeRepository) {
         }
 
         return request.execute()
+    }
+
+    @Transactional
+    fun getVideoDetails() {
+        val url = "$fastApiUrl/youtube"
+
+        val videoList: List<VideoDetailsRequestDto> = youTubeRepository.findAll().map {
+            VideoDetailsRequestDto(it.videoId)
+        }
+
+        webClient.post()
+            .uri(url)
+            .bodyValue(videoList)
+            .retrieve()
+            .bodyToFlux(VideoDetailsResponseDto::class.java)
+            .subscribe(this::saveVideoDetails)
+    }
+
+    private fun saveVideoDetails(dto: VideoDetailsResponseDto) {
+        val video = youTubeRepository.findById(dto.videoId)
+            .orElseThrow { CustomException(ErrorCode.VIDEO_NOT_FOUND) }
+
+        video.length = dto.length
+        video.views = dto.views
+
+        youTubeRepository.save(video)
     }
 }
