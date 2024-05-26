@@ -14,8 +14,8 @@ class ScheduleController(private val scheduleService: ScheduleService) {
 
     @GetMapping("/list")
     fun getScheduleList(
-        @RequestParam year: Int?,
-        @RequestParam month: Int?
+        @RequestParam(required = false) year: Int?,
+        @RequestParam(required = false) month: Int?
     ) : ResponseEntity<List<ScheduleListDto>> {
         return scheduleService.getScheduleList(year, month)
     }

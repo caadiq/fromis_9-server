@@ -13,11 +13,12 @@ class ScheduleService(
     private val scheduleRepository: ScheduleRepository
 ) {
     fun getScheduleList(year: Int?, month: Int?) : ResponseEntity<List<ScheduleListDto>> {
-        if (year == null || month == null) {
-            throw CustomException(ErrorCode.INVALID_PARAMETER)
+        val schedules = when {
+            year == null && month == null -> scheduleRepository.findAll()
+            year != null && month == null -> scheduleRepository.findByYear(year)
+            year == null && month != null -> throw CustomException(ErrorCode.INVALID_PARAMETER)
+            else -> scheduleRepository.findByYearAndMonth(year!!, month!!)
         }
-
-        val schedules = scheduleRepository.findByYearAndMonth(year, month)
 
         val scheduleList = schedules.map {
             ScheduleListDto(
