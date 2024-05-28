@@ -96,6 +96,7 @@ class ScheduleService(
                 it.scheduleId,
                 it.platform.platform,
                 it.platform.image,
+                it.platform.color,
                 it.date,
                 it.schedule,
                 it.description,

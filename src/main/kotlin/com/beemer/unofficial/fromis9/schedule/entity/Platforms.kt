@@ -12,6 +12,9 @@ data class Platforms(
     @Column(name = "image", nullable = false)
     val image: String,
 
+    @Column(name = "color", nullable = false)
+    val color: String,
+
     @OneToMany(mappedBy = "platform", cascade = [CascadeType.ALL])
     val schedules: List<Schedules>
 )
