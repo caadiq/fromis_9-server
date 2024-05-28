@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 data class ScheduleListDto(
     val scheduleId: Int,
-    val playtform: String,
+    val platform: String,
     val image: String,
     val dateTime: LocalDateTime,
     val schedule: String,
