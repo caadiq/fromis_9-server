@@ -6,6 +6,7 @@ import com.beemer.unofficial.fromis9.common.utils.RedisUtil
 import com.beemer.unofficial.fromis9.fromis9.dto.*
 import com.beemer.unofficial.fromis9.fromis9.entity.Members
 import com.beemer.unofficial.fromis9.fromis9.entity.Socials
+import com.beemer.unofficial.fromis9.fromis9.repository.BannerImageRepository
 import com.beemer.unofficial.fromis9.fromis9.repository.MemberRepository
 import com.beemer.unofficial.fromis9.fromis9.repository.SocialRepository
 import jakarta.transaction.Transactional
@@ -20,6 +21,7 @@ import java.text.SimpleDateFormat
 class Fromis9Service(
     private val memberRepository: MemberRepository,
     private val socialRepository: SocialRepository,
+    private val bannerImageRepository: BannerImageRepository,
     private val webClient: WebClient,
     private val redisUtil: RedisUtil
 ) {
@@ -65,12 +67,14 @@ class Fromis9Service(
     }
 
     fun getFromis9() : ResponseEntity<Fromis9Dto> {
+        val bannerImages = bannerImageRepository.findAll().map { it.imageUrl }
         val detail = redisUtil.getData("fromis9_detail") ?: ""
         val debut = redisUtil.getData("fromis9_debut") ?: ""
         val socials = socialRepository.findAll().map { Social(it.sns, it.url) }
         val members = memberRepository.findAll().map { Member(it.name, it.profileImage) }
 
         val fromis9Dto = Fromis9Dto(
+            bannerImages = bannerImages,
             detail = detail,
             debut = debut,
             socials = socials,
