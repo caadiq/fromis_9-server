@@ -16,6 +16,14 @@ enum class ErrorCode(
 
 
     /**
+     * 401 Unauthorized
+     * 클라이언트가 인증되지 않은 상태에서 보호된 리소스에 접근하려고 할 때 발생하는 에러 코드
+     * ex) 로그인하지 않은 사용자가 로그인이 필요한 페이지에 접근할 때
+     */
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
+
+
+    /**
      * 404 Not Found
      * 클라이언트가 요청한 리소스를 찾을 수 없을 때 발생하는 에러 코드
      * ex) 존재하지 않는 데이터를 조회할 때
@@ -23,6 +31,9 @@ enum class ErrorCode(
     ALBUM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 앨범이 존재하지 않습니다."),
     SONG_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 곡이 존재하지 않습니다."),
     VIDEO_NOT_FOUND(HttpStatus.NOT_FOUND, "영상이 존재하지 않습니다."),
+    PLATFORM_NOT_FOUND(HttpStatus.NOT_FOUND, "플랫폼이 존재하지 않습니다."),
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다."),
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "멤버가 존재하지 않습니다."),
 
 
     /**
