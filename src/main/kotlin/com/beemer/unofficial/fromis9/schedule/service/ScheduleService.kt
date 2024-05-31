@@ -3,6 +3,7 @@ package com.beemer.unofficial.fromis9.schedule.service
 import com.beemer.unofficial.fromis9.common.dto.MessageDto
 import com.beemer.unofficial.fromis9.common.exception.CustomException
 import com.beemer.unofficial.fromis9.common.exception.ErrorCode
+import com.beemer.unofficial.fromis9.schedule.dto.PlatformListDto
 import com.beemer.unofficial.fromis9.schedule.dto.ScheduleDto
 import com.beemer.unofficial.fromis9.schedule.dto.ScheduleListDto
 import com.beemer.unofficial.fromis9.schedule.entity.Schedules
@@ -106,5 +107,19 @@ class ScheduleService(
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(scheduleList)
+    }
+
+    fun getPlatformList() : ResponseEntity<List<PlatformListDto>> {
+        val platforms = platformRepository.findAll()
+
+        val platformList = platforms.map {
+            PlatformListDto(
+                it.platform,
+                it.image,
+                it.color
+            )
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(platformList)
     }
 }

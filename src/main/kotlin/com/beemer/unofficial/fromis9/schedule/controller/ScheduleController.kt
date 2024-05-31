@@ -1,6 +1,7 @@
 package com.beemer.unofficial.fromis9.schedule.controller
 
 import com.beemer.unofficial.fromis9.common.dto.MessageDto
+import com.beemer.unofficial.fromis9.schedule.dto.PlatformListDto
 import com.beemer.unofficial.fromis9.schedule.dto.ScheduleDto
 import com.beemer.unofficial.fromis9.schedule.dto.ScheduleListDto
 import com.beemer.unofficial.fromis9.schedule.service.ScheduleService
@@ -42,5 +43,10 @@ class ScheduleController(private val scheduleService: ScheduleService) {
         @RequestParam(required = false) month: Int?
     ) : ResponseEntity<List<ScheduleListDto>> {
         return scheduleService.getScheduleList(year, month)
+    }
+
+    @GetMapping("/platforms")
+    fun getPlatformList() : ResponseEntity<List<PlatformListDto>> {
+        return scheduleService.getPlatformList()
     }
 }
