@@ -6,7 +6,6 @@ import com.beemer.unofficial.fromis9.common.utils.RedisUtil
 import com.beemer.unofficial.fromis9.fromis9.dto.*
 import com.beemer.unofficial.fromis9.fromis9.entity.Members
 import com.beemer.unofficial.fromis9.fromis9.entity.Socials
-import com.beemer.unofficial.fromis9.fromis9.repository.BannerImageRepository
 import com.beemer.unofficial.fromis9.fromis9.repository.MemberRepository
 import com.beemer.unofficial.fromis9.fromis9.repository.SocialRepository
 import jakarta.transaction.Transactional
@@ -21,15 +20,17 @@ import java.text.SimpleDateFormat
 class Fromis9Service(
     private val memberRepository: MemberRepository,
     private val socialRepository: SocialRepository,
-    private val bannerImageRepository: BannerImageRepository,
     private val webClient: WebClient,
     private val redisUtil: RedisUtil
 ) {
     @Value("\${pledis.profile.url}")
     private lateinit var pledisProfileUrl: String
 
-    @Value("\${pledis.file.url}")
-    private lateinit var pledisFileUrl: String
+    @Value("\${pledis.file.bbsData}")
+    private lateinit var pledisFileBbsData: String
+
+    @Value("\${pledis.file.goodsImages}")
+    private lateinit var pledisFileGoodsImages: String
 
     @Transactional
     fun fetchFromis9Profile() {
@@ -54,7 +55,7 @@ class Fromis9Service(
             Members(
                 name = profile.subject,
                 birth = SimpleDateFormat("yyyy.MM.dd").parse(profile.data3),
-                profileImage = "$pledisFileUrl${profile.bbsFile}"
+                profileImage = "$pledisFileBbsData${profile.bbsFile}"
             )
         }
 
@@ -62,19 +63,20 @@ class Fromis9Service(
 
         redisUtil.apply {
             setData("fromis9_detail", dto.detail)
+            setData("fromis9_image", "$pledisFileGoodsImages${dto.listImg}")
             setData("fromis9_debut", dto.content1)
         }
     }
 
     fun getFromis9() : ResponseEntity<Fromis9Dto> {
-        val bannerImages = bannerImageRepository.findAll().map { it.imageUrl }
+        val bannerImage = redisUtil.getData("fromis9_image") ?: ""
         val detail = redisUtil.getData("fromis9_detail") ?: ""
         val debut = redisUtil.getData("fromis9_debut") ?: ""
         val socials = socialRepository.findAll().map { Social(it.sns, it.url) }
         val members = memberRepository.findAll().sortedBy { it.birth }.map { Member(it.name, it.profileImage) }
 
         val fromis9Dto = Fromis9Dto(
-            bannerImages = bannerImages,
+            bannerImage = bannerImage,
             detail = detail,
             debut = debut,
             socials = socials,
