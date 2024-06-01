@@ -71,7 +71,7 @@ class Fromis9Service(
         val detail = redisUtil.getData("fromis9_detail") ?: ""
         val debut = redisUtil.getData("fromis9_debut") ?: ""
         val socials = socialRepository.findAll().map { Social(it.sns, it.url) }
-        val members = memberRepository.findAll().map { Member(it.name, it.profileImage) }
+        val members = memberRepository.findAll().sortedBy { it.birth }.map { Member(it.name, it.profileImage) }
 
         val fromis9Dto = Fromis9Dto(
             bannerImages = bannerImages,
