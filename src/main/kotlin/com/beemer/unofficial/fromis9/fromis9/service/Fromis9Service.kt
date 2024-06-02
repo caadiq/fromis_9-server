@@ -1,5 +1,6 @@
 package com.beemer.unofficial.fromis9.fromis9.service
 
+import com.beemer.unofficial.fromis9.album.repository.AlbumRepository
 import com.beemer.unofficial.fromis9.common.exception.CustomException
 import com.beemer.unofficial.fromis9.common.exception.ErrorCode
 import com.beemer.unofficial.fromis9.common.utils.RedisUtil
@@ -10,6 +11,8 @@ import com.beemer.unofficial.fromis9.fromis9.repository.MemberRepository
 import com.beemer.unofficial.fromis9.fromis9.repository.SocialRepository
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -20,6 +23,7 @@ import java.text.SimpleDateFormat
 class Fromis9Service(
     private val memberRepository: MemberRepository,
     private val socialRepository: SocialRepository,
+    private val albumRepository: AlbumRepository,
     private val webClient: WebClient,
     private val redisUtil: RedisUtil
 ) {
@@ -74,13 +78,16 @@ class Fromis9Service(
         val debut = redisUtil.getData("fromis9_debut") ?: ""
         val socials = socialRepository.findAll().map { Social(it.sns, it.url) }
         val members = memberRepository.findAll().sortedBy { it.birth }.map { Member(it.name, it.profileImage) }
+        val pageable = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "release"))
+        val albums = albumRepository.findAll(pageable).content.map { Albums(it.albumName, it.cover, it.colorMain, it.colorPrimary, it.colorSecondary) }
 
         val fromis9Dto = Fromis9Dto(
             bannerImage = bannerImage,
             detail = detail,
             debut = debut,
             socials = socials,
-            members = members
+            members = members,
+            albums = albums
         )
 
         return ResponseEntity.ok(fromis9Dto)
