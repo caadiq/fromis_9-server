@@ -1,5 +1,6 @@
 package com.beemer.unofficial.fromis9.fromis9.service
 
+import com.beemer.unofficial.fromis9.album.dto.AlbumListDto
 import com.beemer.unofficial.fromis9.album.repository.AlbumRepository
 import com.beemer.unofficial.fromis9.common.exception.CustomException
 import com.beemer.unofficial.fromis9.common.exception.ErrorCode
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 
 @Service
 class Fromis9Service(
@@ -36,6 +38,8 @@ class Fromis9Service(
     @Value("\${pledis.file.goodsImages}")
     private lateinit var pledisFileGoodsImages: String
 
+    private val formatter = DateTimeFormatter.ofPattern("yyyy")
+
     @Transactional
     fun fetchFromis9Profile() {
         webClient.get()
@@ -47,10 +51,10 @@ class Fromis9Service(
 
     private fun saveFromis9Profile(dto: Fromis9ResponseDto) {
         val socialsList = listOf(
-            Socials("facebook", dto.facebook),
-            Socials("twitter", dto.twitter),
-            Socials("youtube", dto.youtube),
-            Socials("insta", dto.insta)
+            Socials("FaceBook", dto.facebook),
+            Socials("X", dto.twitter),
+            Socials("YouTube", dto.youtube),
+            Socials("Instagram", dto.insta)
         )
 
         socialRepository.saveAll(socialsList)
@@ -66,7 +70,6 @@ class Fromis9Service(
         memberRepository.saveAll(membersList)
 
         redisUtil.apply {
-            setData("fromis9_detail", dto.detail)
             setData("fromis9_image", "$pledisFileGoodsImages${dto.listImg}")
             setData("fromis9_debut", dto.content1)
         }
@@ -74,16 +77,14 @@ class Fromis9Service(
 
     fun getFromis9() : ResponseEntity<Fromis9Dto> {
         val bannerImage = redisUtil.getData("fromis9_image") ?: ""
-        val detail = redisUtil.getData("fromis9_detail") ?: ""
         val debut = redisUtil.getData("fromis9_debut") ?: ""
         val socials = socialRepository.findAll().map { Social(it.sns, it.url) }
         val members = memberRepository.findAll().sortedBy { it.birth }.map { Member(it.name, it.profileImage) }
         val pageable = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "release"))
-        val albums = albumRepository.findAll(pageable).content.map { Albums(it.albumName, it.cover, it.colorMain, it.colorPrimary, it.colorSecondary) }
+        val albums = albumRepository.findAll(pageable).content.map { AlbumListDto(it.albumName, it.type, it.cover, it.release.format(formatter), it.colorMain, it.colorPrimary, it.colorSecondary) }
 
         val fromis9Dto = Fromis9Dto(
             bannerImage = bannerImage,
-            detail = detail,
             debut = debut,
             socials = socials,
             members = members,
