@@ -98,6 +98,19 @@ class AlbumService(
         return ResponseEntity.status(HttpStatus.OK).body(songDetails)
     }
 
+    // 노래 목록
+    fun getSongList(): ResponseEntity<List<SongListDto>> {
+        val songList = songRepository.findAllOrderByAlbumReleaseDescAndTrackAsc().map {
+            SongListDto(
+                songName = it.songName,
+                albumName = it.albumName.albumName,
+                albumCover = it.albumName.cover
+            )
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(songList)
+    }
+
     @Transactional
     fun fetchWeverseShopAlbums() {
         val url = "$fastApiUrl/weverseshop"
