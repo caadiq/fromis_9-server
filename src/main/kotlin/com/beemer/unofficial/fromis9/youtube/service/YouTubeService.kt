@@ -2,6 +2,9 @@ package com.beemer.unofficial.fromis9.youtube.service
 
 import com.beemer.unofficial.fromis9.common.exception.CustomException
 import com.beemer.unofficial.fromis9.common.exception.ErrorCode
+import com.beemer.unofficial.fromis9.schedule.entity.Schedules
+import com.beemer.unofficial.fromis9.schedule.repository.PlatformRepository
+import com.beemer.unofficial.fromis9.schedule.repository.ScheduleRepository
 import com.beemer.unofficial.fromis9.youtube.dto.*
 import com.beemer.unofficial.fromis9.youtube.entity.YouTubeVideoDetails
 import com.beemer.unofficial.fromis9.youtube.entity.YouTubeVideos
@@ -29,6 +32,8 @@ enum class YouTubeChannel(val playlistId: String) {
 @Service
 class YouTubeService(
     private val youTubeVideoRepository: YouTubeVideoRepository,
+    private val scheduleRepository: ScheduleRepository,
+    private val platformRepository: PlatformRepository,
     private val webClient: WebClient
 ) {
     @Value("\${youtube.api.key}")
@@ -36,6 +41,59 @@ class YouTubeService(
 
     @Value("\${fast.api.url}")
     private lateinit var fastApiUrl: String
+
+    @Transactional
+    fun fetchYouTubePlaylist(playlistId: String) {
+        var nextPageToken: String? = null
+        val youTubeVideoList = mutableListOf<YouTubeVideos>()
+
+        do {
+            val response = getPlayListVideos(playlistId, nextPageToken)
+
+            val youTubeVideosList = response.items.map { item ->
+                val videoId = item.contentDetails.videoId
+                val title = item.snippet.title
+                val thumbnail = item.snippet.thumbnails.run {
+                    maxres?.url ?: medium?.url ?: high?.url ?: default.url
+                }
+                val publishedAt = Instant.ofEpochMilli(item.contentDetails.videoPublishedAt.value)
+                    .atZone(ZoneId.of("UTC"))
+                    .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+                    .toLocalDateTime()
+                val description = item.snippet.description
+
+                val schedule = scheduleRepository.findBySchedule(title)
+                    .orElse(null)
+                val platform = platformRepository.findById("youtube")
+                    .orElseThrow { CustomException(ErrorCode.PLATFORM_NOT_FOUND) }
+                if (schedule == null) {
+                    val newSchedule = Schedules(
+                        platform,
+                        publishedAt,
+                        title,
+                        null,
+                        "https://www.youtube.com/watch?v=$videoId",
+                        false
+                    )
+                    scheduleRepository.save(newSchedule)
+                }
+
+                YouTubeVideos(
+                    videoId,
+                    title,
+                    thumbnail,
+                    publishedAt,
+                    description
+                )
+            }
+
+            youTubeVideoList.addAll(youTubeVideosList)
+
+            nextPageToken = response.nextPageToken
+        } while (!nextPageToken.isNullOrEmpty())
+
+        youTubeVideoRepository.saveAll(youTubeVideoList)
+    }
 
     fun getVideoList(playlist: String?, page: Int, limit: Int, query: String?) : ResponseEntity<YouTubeListDto> {
         val limitAdjusted = 1.coerceAtLeast(50.coerceAtMost(limit))
@@ -66,43 +124,6 @@ class YouTubeService(
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(YouTubeListDto(pages, videos))
-    }
-
-    @Transactional
-    fun fetchYouTubePlaylist(playlistId: String) {
-        var nextPageToken: String? = null
-        val youTubeVideoList = mutableListOf<YouTubeVideos>()
-
-        do {
-            val response = getPlayListVideos(playlistId, nextPageToken)
-
-            val youTubeVideosList = response.items.map { item ->
-                val videoId = item.contentDetails.videoId
-                val title = item.snippet.title
-                val thumbnail = item.snippet.thumbnails.run {
-                    maxres?.url ?: medium?.url ?: high?.url ?: default.url
-                }
-                val publishedAt = Instant.ofEpochMilli(item.contentDetails.videoPublishedAt.value)
-                    .atZone(ZoneId.of("UTC"))
-                    .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
-                    .toLocalDateTime()
-                val description = item.snippet.description
-
-                YouTubeVideos(
-                    videoId,
-                    title,
-                    thumbnail,
-                    publishedAt,
-                    description
-                )
-            }
-
-            youTubeVideoList.addAll(youTubeVideosList)
-
-            nextPageToken = response.nextPageToken
-        } while (!nextPageToken.isNullOrEmpty())
-
-        youTubeVideoRepository.saveAll(youTubeVideoList)
     }
 
     private fun getPlayListVideos(playlistId: String, pageToken: String?): PlaylistItemListResponse {
