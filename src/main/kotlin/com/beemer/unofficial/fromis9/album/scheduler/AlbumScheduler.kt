@@ -9,6 +9,6 @@ class AlbumScheduler(private val albumService: AlbumService) {
 
     @Scheduled(cron = "0 5 * * * *")
     fun fetchWeverseShopAlbums() {
-        albumService.getWeverseShopAlbums()
+        albumService.fetchWeverseShopAlbums()
     }
 }

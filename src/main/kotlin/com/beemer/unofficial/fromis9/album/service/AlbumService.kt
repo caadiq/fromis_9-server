@@ -99,7 +99,7 @@ class AlbumService(
     }
 
     @Transactional
-    fun getWeverseShopAlbums() {
+    fun fetchWeverseShopAlbums() {
         val url = "$fastApiUrl/weverseshop"
 
         weverseShopAlbumRepository.deleteAll()
@@ -122,5 +122,20 @@ class AlbumService(
         )
 
         weverseShopAlbumRepository.save(weverseShopAlbums)
+    }
+
+    fun getWeverseShopAlbums(): ResponseEntity<List<WeverseShopAlbumListDto>> {
+        val weverseShopAlbums = weverseShopAlbumRepository.findAll().map {
+            WeverseShopAlbumListDto(
+                index = it.albumId,
+                title = it.title,
+                imgSrc = it.image,
+                url = it.url,
+                price = it.price,
+                isSoldOut = it.soldOut
+            )
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(weverseShopAlbums)
     }
 }
