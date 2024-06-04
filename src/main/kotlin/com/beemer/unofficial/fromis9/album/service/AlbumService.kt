@@ -1,26 +1,36 @@
 package com.beemer.unofficial.fromis9.album.service
 
 import com.beemer.unofficial.fromis9.album.dto.*
+import com.beemer.unofficial.fromis9.album.entity.WeverseShopAlbums
 import com.beemer.unofficial.fromis9.album.repository.AlbumRepository
 import com.beemer.unofficial.fromis9.album.repository.PhotoRepository
 import com.beemer.unofficial.fromis9.album.repository.SongRepository
+import com.beemer.unofficial.fromis9.album.repository.WeverseShopAlbumRepository
 import com.beemer.unofficial.fromis9.common.exception.CustomException
 import com.beemer.unofficial.fromis9.common.exception.ErrorCode
+import jakarta.transaction.Transactional
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.web.reactive.function.client.WebClient
 import java.time.format.DateTimeFormatter
 
 @Service
 class AlbumService(
     private val albumRepository: AlbumRepository,
     private val photoRepository: PhotoRepository,
-    private val songRepository: SongRepository
+    private val songRepository: SongRepository,
+    private val weverseShopAlbumRepository: WeverseShopAlbumRepository,
+    private val webClient: WebClient
 ) {
+    @Value("\${fast.api.url}")
+    private lateinit var fastApiUrl: String
+
     private val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 
     // 앨범 목록
-    fun getAlbumList() : ResponseEntity<List<AlbumListDto>> {
+    fun getAlbumList(): ResponseEntity<List<AlbumListDto>> {
         val albumList = albumRepository.findAllByOrderByReleaseDesc().map {
             AlbumListDto(
                 albumName = it.albumName,
@@ -37,7 +47,7 @@ class AlbumService(
     }
 
     // 앨범 상세
-    fun getAlbumDetails(albumName: String) : ResponseEntity<AlbumDetailsDto> {
+    fun getAlbumDetails(albumName: String): ResponseEntity<AlbumDetailsDto> {
         val album = albumRepository.findById(albumName).orElseThrow {
             CustomException(ErrorCode.ALBUM_NOT_FOUND)
         }
@@ -70,7 +80,7 @@ class AlbumService(
     }
 
     // 노래 상세
-    fun getSongDetails(songName: String) : ResponseEntity<SongDetailsDto> {
+    fun getSongDetails(songName: String): ResponseEntity<SongDetailsDto> {
         val song = songRepository.findById(songName).orElseThrow {
             CustomException(ErrorCode.SONG_NOT_FOUND)
         }
@@ -86,5 +96,31 @@ class AlbumService(
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(songDetails)
+    }
+
+    @Transactional
+    fun getWeverseShopAlbums() {
+        val url = "$fastApiUrl/weverseshop"
+
+        weverseShopAlbumRepository.deleteAll()
+
+        webClient.get()
+            .uri(url)
+            .retrieve()
+            .bodyToFlux(WeverseShopAlbumListDto::class.java)
+            .subscribe(this::saveWeverseShopAlbums)
+    }
+
+    private fun saveWeverseShopAlbums(dto: WeverseShopAlbumListDto) {
+        val weverseShopAlbums = WeverseShopAlbums(
+            albumId = dto.index,
+            title = dto.title,
+            image = dto.imgSrc,
+            url = dto.url,
+            price = dto.price,
+            soldOut = dto.isSoldOut
+        )
+
+        weverseShopAlbumRepository.save(weverseShopAlbums)
     }
 }
