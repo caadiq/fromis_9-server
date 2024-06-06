@@ -8,6 +8,7 @@ data class Fromis9ResponseDto(
     val youtube: String,
     val insta: String,
     val detail: String,
+    @JsonProperty("list_img") val listImg: String,
     val content1: String,
     @JsonProperty("profile_list") val profileList: List<ProfileList>
 )

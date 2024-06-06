@@ -1,11 +1,13 @@
 package com.beemer.unofficial.fromis9.fromis9.dto
 
+import com.beemer.unofficial.fromis9.album.dto.AlbumListDto
+
 data class Fromis9Dto(
-    val bannerImages: List<String>,
-    val detail: String,
+    val bannerImage: String,
     val debut: String,
     val members: List<Member>,
-    val socials: List<Social>
+    val socials: List<Social>,
+    val albums: List<AlbumListDto>
 )
 
 data class Member(
