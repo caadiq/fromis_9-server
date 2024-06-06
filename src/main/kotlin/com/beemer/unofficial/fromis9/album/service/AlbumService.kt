@@ -104,7 +104,10 @@ class AlbumService(
             SongListDto(
                 songName = it.songName,
                 albumName = it.albumName.albumName,
-                albumCover = it.albumName.cover
+                albumCover = it.albumName.cover,
+                colorMain = it.albumName.colorMain,
+                colorPrimary = it.albumName.colorPrimary,
+                colorSecondary = it.albumName.colorSecondary
             )
         }
 
