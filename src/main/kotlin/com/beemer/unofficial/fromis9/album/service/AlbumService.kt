@@ -91,7 +91,9 @@ class AlbumService(
                 composer = composer,
                 arranger = arranger,
                 lyrics = lyrics,
-                videoId = videoId
+                fanchat = fanchat,
+                videoId = videoId,
+                fanchantVideoId = fanchantVideoId
             )
         }
 

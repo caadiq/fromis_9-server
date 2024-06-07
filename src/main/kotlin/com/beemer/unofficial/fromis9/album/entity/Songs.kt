@@ -25,6 +25,9 @@ data class Songs(
     @Column(name = "lyrics", nullable = false)
     val lyrics: String,
 
+    @Column(name = "fanchat")
+    val fanchat: String?,
+
     @Column(name = "length", nullable = false)
     val length: String,
 
@@ -35,5 +38,8 @@ data class Songs(
     val track: Int,
 
     @Column(name = "video_id", nullable = false)
-    val videoId: String
+    val videoId: String,
+
+    @Column(name = "fanchant_video_id")
+    val fanchantVideoId: String?
 )
