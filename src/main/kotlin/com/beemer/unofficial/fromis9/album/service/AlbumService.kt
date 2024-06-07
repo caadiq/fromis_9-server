@@ -107,7 +107,8 @@ class AlbumService(
                 albumCover = it.albumName.cover,
                 colorMain = it.albumName.colorMain,
                 colorPrimary = it.albumName.colorPrimary,
-                colorSecondary = it.albumName.colorSecondary
+                colorSecondary = it.albumName.colorSecondary,
+                titleTrack = it.title
             )
         }
 
