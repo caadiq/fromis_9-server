@@ -11,4 +11,9 @@ class NewsScheduler(private val newsService: NewsService) {
     fun fetchWeverseLive() {
         newsService.fetchWeverseLive()
     }
+
+    @Scheduled(cron = "0 5 * * * *")
+    fun fetchWeverseNotice() {
+        newsService.fetchWeverseNotice()
+    }
 }
