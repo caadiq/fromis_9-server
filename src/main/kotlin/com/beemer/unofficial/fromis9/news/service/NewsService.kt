@@ -75,8 +75,6 @@ class NewsService(
     fun fetchWeverseShopAlbums() {
         val url = "$fastApiUrl/weverse/shop"
 
-        weverseShopAlbumRepository.deleteAll()
-
         webClient.get()
             .uri(url)
             .retrieve()
