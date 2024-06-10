@@ -1,13 +1,18 @@
 package com.beemer.unofficial.fromis9.news.service
 
+import com.beemer.unofficial.fromis9.news.dto.WeverseShopAlbumListDto
 import com.beemer.unofficial.fromis9.news.dto.WeverseLiveListDto
 import com.beemer.unofficial.fromis9.news.dto.WeverseNoticeListDto
 import com.beemer.unofficial.fromis9.news.entity.WeverseLive
 import com.beemer.unofficial.fromis9.news.entity.WeverseNotice
+import com.beemer.unofficial.fromis9.news.entity.WeverseShopAlbums
 import com.beemer.unofficial.fromis9.news.repository.WeverseLiveRepository
 import com.beemer.unofficial.fromis9.news.repository.WeverseNoticeRepository
+import com.beemer.unofficial.fromis9.news.repository.WeverseShopAlbumRepository
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 
@@ -15,6 +20,7 @@ import org.springframework.web.reactive.function.client.WebClient
 class NewsService(
     private val weverseLiveRepository: WeverseLiveRepository,
     private val weverseNoticeRepository: WeverseNoticeRepository,
+    private val weverseShopAlbumRepository: WeverseShopAlbumRepository,
     private val webClient: WebClient
 ) {
     @Value("\${fast.api.url}")
@@ -63,5 +69,46 @@ class NewsService(
         )
 
         weverseNoticeRepository.save(weverseNotice)
+    }
+
+    @Transactional
+    fun fetchWeverseShopAlbums() {
+        val url = "$fastApiUrl/weverse/shop"
+
+        weverseShopAlbumRepository.deleteAll()
+
+        webClient.get()
+            .uri(url)
+            .retrieve()
+            .bodyToFlux(WeverseShopAlbumListDto::class.java)
+            .subscribe(this::saveWeverseShopAlbums)
+    }
+
+    private fun saveWeverseShopAlbums(dto: WeverseShopAlbumListDto) {
+        val weverseShopAlbums = WeverseShopAlbums(
+            albumId = dto.itemId,
+            title = dto.title,
+            image = dto.img,
+            url = dto.url,
+            price = dto.price,
+            soldOut = dto.isSoldOut
+        )
+
+        weverseShopAlbumRepository.save(weverseShopAlbums)
+    }
+
+    fun getWeverseShopAlbums(): ResponseEntity<List<WeverseShopAlbumListDto>> {
+        val weverseShopAlbums = weverseShopAlbumRepository.findAll().map {
+            WeverseShopAlbumListDto(
+                itemId = it.albumId,
+                title = it.title,
+                img = it.image,
+                url = it.url,
+                price = it.price,
+                isSoldOut = it.soldOut
+            )
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(weverseShopAlbums)
     }
 }

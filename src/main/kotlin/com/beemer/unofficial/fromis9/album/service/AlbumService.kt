@@ -1,32 +1,22 @@
 package com.beemer.unofficial.fromis9.album.service
 
 import com.beemer.unofficial.fromis9.album.dto.*
-import com.beemer.unofficial.fromis9.album.entity.WeverseShopAlbums
 import com.beemer.unofficial.fromis9.album.repository.AlbumRepository
 import com.beemer.unofficial.fromis9.album.repository.PhotoRepository
 import com.beemer.unofficial.fromis9.album.repository.SongRepository
-import com.beemer.unofficial.fromis9.album.repository.WeverseShopAlbumRepository
 import com.beemer.unofficial.fromis9.common.exception.CustomException
 import com.beemer.unofficial.fromis9.common.exception.ErrorCode
-import jakarta.transaction.Transactional
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
 import java.time.format.DateTimeFormatter
 
 @Service
 class AlbumService(
     private val albumRepository: AlbumRepository,
     private val photoRepository: PhotoRepository,
-    private val songRepository: SongRepository,
-    private val weverseShopAlbumRepository: WeverseShopAlbumRepository,
-    private val webClient: WebClient
+    private val songRepository: SongRepository
 ) {
-    @Value("\${fast.api.url}")
-    private lateinit var fastApiUrl: String
-
     private val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 
     // 앨범 목록
@@ -115,46 +105,5 @@ class AlbumService(
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(songList)
-    }
-
-    @Transactional
-    fun fetchWeverseShopAlbums() {
-        val url = "$fastApiUrl/weverse/shop"
-
-        weverseShopAlbumRepository.deleteAll()
-
-        webClient.get()
-            .uri(url)
-            .retrieve()
-            .bodyToFlux(WeverseShopAlbumListDto::class.java)
-            .subscribe(this::saveWeverseShopAlbums)
-    }
-
-    private fun saveWeverseShopAlbums(dto: WeverseShopAlbumListDto) {
-        val weverseShopAlbums = WeverseShopAlbums(
-            albumId = dto.index,
-            title = dto.title,
-            image = dto.imgSrc,
-            url = dto.url,
-            price = dto.price,
-            soldOut = dto.isSoldOut
-        )
-
-        weverseShopAlbumRepository.save(weverseShopAlbums)
-    }
-
-    fun getWeverseShopAlbums(): ResponseEntity<List<WeverseShopAlbumListDto>> {
-        val weverseShopAlbums = weverseShopAlbumRepository.findAll().map {
-            WeverseShopAlbumListDto(
-                index = it.albumId,
-                title = it.title,
-                imgSrc = it.image,
-                url = it.url,
-                price = it.price,
-                isSoldOut = it.soldOut
-            )
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(weverseShopAlbums)
     }
 }
