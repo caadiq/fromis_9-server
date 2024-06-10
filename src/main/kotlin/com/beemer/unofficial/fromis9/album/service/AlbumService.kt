@@ -119,7 +119,7 @@ class AlbumService(
 
     @Transactional
     fun fetchWeverseShopAlbums() {
-        val url = "$fastApiUrl/weverseshop"
+        val url = "$fastApiUrl/weverse/shop"
 
         weverseShopAlbumRepository.deleteAll()
 
