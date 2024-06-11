@@ -10,6 +10,8 @@ import com.beemer.unofficial.fromis9.fromis9.entity.Members
 import com.beemer.unofficial.fromis9.fromis9.entity.Socials
 import com.beemer.unofficial.fromis9.fromis9.repository.MemberRepository
 import com.beemer.unofficial.fromis9.fromis9.repository.SocialRepository
+import com.beemer.unofficial.fromis9.news.repository.DcinsidePostRepository
+import com.beemer.unofficial.fromis9.news.repository.WeverseNoticeRepository
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
@@ -26,6 +28,8 @@ class Fromis9Service(
     private val memberRepository: MemberRepository,
     private val socialRepository: SocialRepository,
     private val albumRepository: AlbumRepository,
+    private val weverseNoticeRepository: WeverseNoticeRepository,
+    private val dcinsidePostRepository: DcinsidePostRepository,
     private val webClient: WebClient,
     private val redisUtil: RedisUtil
 ) {
@@ -83,12 +87,35 @@ class Fromis9Service(
         val pageable = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "release"))
         val albums = albumRepository.findAll(pageable).content.map { AlbumListDto(it.albumName, it.type, it.cover, it.release.format(formatter), it.colorMain, it.colorPrimary, it.colorSecondary) }
 
+        val weverseNotice = weverseNoticeRepository.findTop10ByOrderByDateDesc().map {
+            LatestNews(
+                it.noticeId,
+                it.title,
+                it.url,
+                it.date.atStartOfDay()
+            )
+        }
+
+        val dcinsidePosts = dcinsidePostRepository.findTop10ByOrderByDateDesc().map {
+            LatestNews(
+                it.liveId,
+                it.title,
+                it.url,
+                it.date
+            )
+        }
+
+        val latestNews = (weverseNotice + dcinsidePosts)
+            .sortedByDescending { it.date }
+            .take(5)
+
         val fromis9Dto = Fromis9Dto(
             bannerImage = bannerImage,
             debut = debut,
             socials = socials,
             members = members,
-            albums = albums
+            albums = albums,
+            latestNews = latestNews
         )
 
         return ResponseEntity.ok(fromis9Dto)
