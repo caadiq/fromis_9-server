@@ -3,6 +3,7 @@ package com.beemer.unofficial.fromis9.schedule.repository
 import com.beemer.unofficial.fromis9.schedule.entity.Schedules
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import java.time.LocalDateTime
 import java.util.*
 
 interface ScheduleRepository : JpaRepository<Schedules, Int> {
@@ -13,4 +14,6 @@ interface ScheduleRepository : JpaRepository<Schedules, Int> {
     fun findByYear(year: Int): List<Schedules>
 
     fun findBySchedule(schedule: String): Optional<Schedules>
+
+    fun existsByDateAndSchedule(date: LocalDateTime, schedule: String): Boolean
 }

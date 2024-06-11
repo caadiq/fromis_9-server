@@ -1,14 +1,22 @@
 package com.beemer.unofficial.fromis9.news.service
 
-import com.beemer.unofficial.fromis9.news.dto.WeverseShopAlbumListDto
+import com.beemer.unofficial.fromis9.common.exception.CustomException
+import com.beemer.unofficial.fromis9.common.exception.ErrorCode
+import com.beemer.unofficial.fromis9.news.dto.DcinsidePostListDto
 import com.beemer.unofficial.fromis9.news.dto.WeverseLiveListDto
 import com.beemer.unofficial.fromis9.news.dto.WeverseNoticeListDto
+import com.beemer.unofficial.fromis9.news.dto.WeverseShopAlbumListDto
+import com.beemer.unofficial.fromis9.news.entity.DcinsidePosts
 import com.beemer.unofficial.fromis9.news.entity.WeverseLive
 import com.beemer.unofficial.fromis9.news.entity.WeverseNotice
 import com.beemer.unofficial.fromis9.news.entity.WeverseShopAlbums
+import com.beemer.unofficial.fromis9.news.repository.DcinsidePostRepository
 import com.beemer.unofficial.fromis9.news.repository.WeverseLiveRepository
 import com.beemer.unofficial.fromis9.news.repository.WeverseNoticeRepository
 import com.beemer.unofficial.fromis9.news.repository.WeverseShopAlbumRepository
+import com.beemer.unofficial.fromis9.schedule.entity.Schedules
+import com.beemer.unofficial.fromis9.schedule.repository.PlatformRepository
+import com.beemer.unofficial.fromis9.schedule.repository.ScheduleRepository
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -21,6 +29,9 @@ class NewsService(
     private val weverseLiveRepository: WeverseLiveRepository,
     private val weverseNoticeRepository: WeverseNoticeRepository,
     private val weverseShopAlbumRepository: WeverseShopAlbumRepository,
+    private val dcinsidePostRepository: DcinsidePostRepository,
+    private val scheduleRepository: ScheduleRepository,
+    private val platformRepository: PlatformRepository,
     private val webClient: WebClient
 ) {
     @Value("\${fast.api.url}")
@@ -47,6 +58,22 @@ class NewsService(
         )
 
         weverseLiveRepository.save(weverseLive)
+
+        if (!scheduleRepository.existsByDateAndSchedule(dto.date, dto.title)) {
+            val platform = platformRepository.findById("weverse")
+                .orElseThrow { CustomException(ErrorCode.PLATFORM_NOT_FOUND) }
+
+            val schedule = Schedules(
+                platform,
+                dto.date,
+                dto.title,
+                dto.members,
+                dto.url,
+                false
+            )
+
+            scheduleRepository.save(schedule)
+        }
     }
 
     @Transactional
@@ -108,5 +135,27 @@ class NewsService(
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(weverseShopAlbums)
+    }
+
+    @Transactional
+    fun fetchDcinsidePosts() {
+        val url = "$fastApiUrl/dcinside"
+
+        webClient.get()
+            .uri(url)
+            .retrieve()
+            .bodyToFlux(DcinsidePostListDto::class.java)
+            .subscribe(this::saveDcinsidePosts)
+    }
+
+    private fun saveDcinsidePosts(dto: DcinsidePostListDto) {
+        val dcinsidePosts = DcinsidePosts(
+            liveId = dto.postId,
+            title = dto.title,
+            url = dto.url,
+            date = dto.date
+        )
+
+        dcinsidePostRepository.save(dcinsidePosts)
     }
 }

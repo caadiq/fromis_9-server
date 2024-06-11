@@ -21,4 +21,9 @@ class NewsScheduler(private val newsService: NewsService) {
     fun fetchWeverseShopAlbums() {
         newsService.fetchWeverseShopAlbums()
     }
+
+    @Scheduled(cron = "0 0,20,40 * * * *")
+    fun fetchDcinsidePosts() {
+        newsService.fetchDcinsidePosts()
+    }
 }
