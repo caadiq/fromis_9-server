@@ -92,7 +92,9 @@ class Fromis9Service(
                 it.noticeId,
                 it.title,
                 it.url,
-                it.date.atStartOfDay()
+                it.date.atStartOfDay(),
+                it.portal.portal,
+                it.portal.image
             )
         }
 
@@ -101,7 +103,9 @@ class Fromis9Service(
                 it.liveId,
                 it.title,
                 it.url,
-                it.date
+                it.date,
+                it.portal.portal,
+                it.portal.image
             )
         }
 

@@ -1,9 +1,6 @@
 package com.beemer.unofficial.fromis9.news.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import java.time.LocalDate
 
 @Entity
@@ -20,5 +17,9 @@ data class WeverseNotice(
     val url: String,
 
     @Column(name = "date", nullable = false)
-    val date: LocalDate
+    val date: LocalDate,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "portal", nullable = false)
+    val portal: Portals
 )

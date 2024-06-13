@@ -10,10 +10,7 @@ import com.beemer.unofficial.fromis9.news.entity.DcinsidePosts
 import com.beemer.unofficial.fromis9.news.entity.WeverseLive
 import com.beemer.unofficial.fromis9.news.entity.WeverseNotice
 import com.beemer.unofficial.fromis9.news.entity.WeverseShopAlbums
-import com.beemer.unofficial.fromis9.news.repository.DcinsidePostRepository
-import com.beemer.unofficial.fromis9.news.repository.WeverseLiveRepository
-import com.beemer.unofficial.fromis9.news.repository.WeverseNoticeRepository
-import com.beemer.unofficial.fromis9.news.repository.WeverseShopAlbumRepository
+import com.beemer.unofficial.fromis9.news.repository.*
 import com.beemer.unofficial.fromis9.schedule.entity.Schedules
 import com.beemer.unofficial.fromis9.schedule.repository.PlatformRepository
 import com.beemer.unofficial.fromis9.schedule.repository.ScheduleRepository
@@ -32,6 +29,7 @@ class NewsService(
     private val dcinsidePostRepository: DcinsidePostRepository,
     private val scheduleRepository: ScheduleRepository,
     private val platformRepository: PlatformRepository,
+    private val portalRepository: PortalRepository,
     private val webClient: WebClient
 ) {
     @Value("\${fast.api.url}")
@@ -88,11 +86,15 @@ class NewsService(
     }
 
     private fun saveWeverseNotice(dto: WeverseNoticeListDto) {
+        val portal = portalRepository.findById("위버스 공지사항")
+            .orElseThrow { CustomException(ErrorCode.PORTAL_NOT_FOUND) }
+
         val weverseNotice = WeverseNotice(
             noticeId = dto.noticeId,
             title = dto.title,
             url = dto.url,
-            date = dto.date
+            date = dto.date,
+            portal
         )
 
         weverseNoticeRepository.save(weverseNotice)
@@ -149,11 +151,15 @@ class NewsService(
     }
 
     private fun saveDcinsidePosts(dto: DcinsidePostListDto) {
+        val portal = portalRepository.findById("프로미스나인 갤러리")
+            .orElseThrow { CustomException(ErrorCode.PORTAL_NOT_FOUND) }
+
         val dcinsidePosts = DcinsidePosts(
             liveId = dto.postId,
             title = dto.title,
             url = dto.url,
-            date = dto.date
+            date = dto.date,
+            portal
         )
 
         dcinsidePostRepository.save(dcinsidePosts)

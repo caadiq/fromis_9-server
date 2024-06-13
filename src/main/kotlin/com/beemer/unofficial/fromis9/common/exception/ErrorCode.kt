@@ -32,6 +32,7 @@ enum class ErrorCode(
     SONG_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 곡이 존재하지 않습니다."),
     VIDEO_NOT_FOUND(HttpStatus.NOT_FOUND, "영상이 존재하지 않습니다."),
     PLATFORM_NOT_FOUND(HttpStatus.NOT_FOUND, "플랫폼이 존재하지 않습니다."),
+    PORTAL_NOT_FOUND(HttpStatus.NOT_FOUND, "포털이 존재하지 않습니다."),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "멤버가 존재하지 않습니다."),
 
