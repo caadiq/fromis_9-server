@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface AppVersionRepository : JpaRepository<AppVersion, String>
+interface AppVersionRepository : JpaRepository<AppVersion, String> {
+    fun findTopByOrderByDateDesc(): AppVersion
+}
