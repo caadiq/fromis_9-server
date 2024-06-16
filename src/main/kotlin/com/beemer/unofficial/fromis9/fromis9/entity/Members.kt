@@ -1,7 +1,7 @@
 package com.beemer.unofficial.fromis9.fromis9.entity
 
 import jakarta.persistence.*
-import java.util.Date
+import java.time.LocalDate
 
 @Entity
 @Table(name = "Members")
@@ -11,7 +11,7 @@ data class Members(
     var name: String,
 
     @Column(name = "birth", nullable = false)
-    var birth: Date,
+    var birth: LocalDate,
 
     @Column(name = "profile_image", nullable = false)
     var profileImage: String,

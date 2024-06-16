@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import java.text.SimpleDateFormat
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Service
@@ -64,9 +65,11 @@ class Fromis9Service(
         socialRepository.saveAll(socialsList)
 
         val membersList = dto.profileList.map { profile ->
+            val date = SimpleDateFormat("yyyy.MM.dd").parse(profile.data3)
+            val localDate = date.toInstant().atZone(ZoneId.of("Asia/Seoul")).toLocalDate()
             Members(
                 name = profile.subject,
-                birth = SimpleDateFormat("yyyy.MM.dd").parse(profile.data3),
+                birth = localDate,
                 profileImage = "$pledisFileBbsData${profile.bbsFile}"
             )
         }
