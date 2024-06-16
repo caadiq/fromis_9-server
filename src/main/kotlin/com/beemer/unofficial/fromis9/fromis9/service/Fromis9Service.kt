@@ -134,7 +134,7 @@ class Fromis9Service(
 
         val memberProfile = MemberProfileDto(
             name = member.name,
-            birth = SimpleDateFormat("yyyy.MM.dd").format(member.birth),
+            birth = member.birth,
             profileImage = member.profileImage,
             position = member.details?.position,
             instagram = member.details?.instagram
