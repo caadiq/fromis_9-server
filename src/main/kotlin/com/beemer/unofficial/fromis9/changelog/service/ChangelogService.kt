@@ -18,6 +18,7 @@ class ChangelogService(
                 date = it.date,
                 changelog = it.changelogs.map { changelog ->
                     Changelog(
+                        featureId = changelog.featureId,
                         icon = changelog.type.icon,
                         type = changelog.type.type,
                         feature = changelog.feature

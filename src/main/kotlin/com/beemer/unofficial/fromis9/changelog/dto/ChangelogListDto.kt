@@ -9,6 +9,7 @@ data class ChangelogListDto(
 )
 
 data class Changelog(
+    val featureId: Int,
     val icon: String,
     val type: String,
     val feature: String

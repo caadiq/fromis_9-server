@@ -6,8 +6,12 @@ import jakarta.persistence.*
 @Table(name = "Changelog")
 data class Changelog(
     @Id
-    @Column(name = "version", nullable = false)
-    val version: String,
+    @Column(name = "feature_id", nullable = false)
+    val featureId: Int,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "version")
+    val appVersion: AppVersion,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type")
@@ -15,9 +19,4 @@ data class Changelog(
 
     @Column(name = "feature", nullable = false)
     val feature: String,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "version")
-    @MapsId
-    val appVersion: AppVersion
 )
