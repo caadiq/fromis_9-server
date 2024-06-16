@@ -2,10 +2,7 @@ package com.beemer.unofficial.fromis9.news.service
 
 import com.beemer.unofficial.fromis9.common.exception.CustomException
 import com.beemer.unofficial.fromis9.common.exception.ErrorCode
-import com.beemer.unofficial.fromis9.news.dto.DcinsidePostListDto
-import com.beemer.unofficial.fromis9.news.dto.WeverseLiveListDto
-import com.beemer.unofficial.fromis9.news.dto.WeverseNoticeListDto
-import com.beemer.unofficial.fromis9.news.dto.WeverseShopAlbumListDto
+import com.beemer.unofficial.fromis9.news.dto.*
 import com.beemer.unofficial.fromis9.news.entity.DcinsidePosts
 import com.beemer.unofficial.fromis9.news.entity.WeverseLive
 import com.beemer.unofficial.fromis9.news.entity.WeverseNotice
@@ -20,6 +17,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import java.time.LocalDateTime
 
 @Service
 class NewsService(
@@ -163,5 +161,37 @@ class NewsService(
         )
 
         dcinsidePostRepository.save(dcinsidePosts)
+    }
+
+    fun getLatestNewsList() : ResponseEntity<List<LatestNewsListDto>> {
+        val end = LocalDateTime.now().plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0)
+        val start = end.minusDays(4)
+
+        val weverseNotices = weverseNoticeRepository.findByDateBetween(start, end).map {
+            LatestNewsListDto(
+                it.noticeId,
+                it.title,
+                it.url,
+                it.date,
+                it.portal.portal,
+                it.portal.image
+            )
+        }
+
+        val dcinsidePosts = dcinsidePostRepository.findByDateBetween(start, end).map {
+            LatestNewsListDto(
+                it.liveId,
+                it.title,
+                it.url,
+                it.date,
+                it.portal.portal,
+                it.portal.image
+            )
+        }
+
+        val latestNewsList = (weverseNotices + dcinsidePosts)
+            .sortedByDescending { it.date }
+
+        return ResponseEntity.status(HttpStatus.OK).body(latestNewsList)
     }
 }

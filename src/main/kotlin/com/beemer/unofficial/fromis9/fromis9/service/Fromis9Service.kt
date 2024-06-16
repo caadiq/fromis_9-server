@@ -92,7 +92,7 @@ class Fromis9Service(
                 it.noticeId,
                 it.title,
                 it.url,
-                it.date.atStartOfDay(),
+                it.date,
                 it.portal.portal,
                 it.portal.image
             )
@@ -122,7 +122,7 @@ class Fromis9Service(
             latestNews = latestNews
         )
 
-        return ResponseEntity.ok(fromis9Dto)
+        return ResponseEntity.status(HttpStatus.OK).body(fromis9Dto)
     }
 
     fun getMemberProfile(name: String) : ResponseEntity<MemberProfileDto> {
