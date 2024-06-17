@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component
 @Component
 class YouTubeScheduler(private val youtubeService: YouTubeService) {
 
-    @Scheduled(cron = "0 1,11,21,31,41,51 * * * *")
+    @Scheduled(cron = "0 1,6,11,16,21,26,31,36,41,46,51,56 * * * *")
     fun fetchFromis9Playlist() {
         youtubeService.fetchYouTubePlaylist(YouTubeChannel.FROMIS_9.playlistId)
     }
 
-    @Scheduled(cron = "0 1 18 * * *")
+    @Scheduled(cron = "0 1 18,21 * * *")
     fun fetchHybeLabelsPlaylist() {
         youtubeService.fetchYouTubePlaylist(YouTubeChannel.HYBE_LABELS.playlistId)
     }

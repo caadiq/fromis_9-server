@@ -10,6 +10,8 @@ import com.beemer.unofficial.fromis9.fromis9.entity.Members
 import com.beemer.unofficial.fromis9.fromis9.entity.Socials
 import com.beemer.unofficial.fromis9.fromis9.repository.MemberRepository
 import com.beemer.unofficial.fromis9.fromis9.repository.SocialRepository
+import com.beemer.unofficial.fromis9.news.repository.DcinsidePostRepository
+import com.beemer.unofficial.fromis9.news.repository.WeverseNoticeRepository
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
@@ -19,6 +21,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import java.text.SimpleDateFormat
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Service
@@ -26,6 +29,8 @@ class Fromis9Service(
     private val memberRepository: MemberRepository,
     private val socialRepository: SocialRepository,
     private val albumRepository: AlbumRepository,
+    private val weverseNoticeRepository: WeverseNoticeRepository,
+    private val dcinsidePostRepository: DcinsidePostRepository,
     private val webClient: WebClient,
     private val redisUtil: RedisUtil
 ) {
@@ -60,9 +65,11 @@ class Fromis9Service(
         socialRepository.saveAll(socialsList)
 
         val membersList = dto.profileList.map { profile ->
+            val date = SimpleDateFormat("yyyy.MM.dd").parse(profile.data3)
+            val localDate = date.toInstant().atZone(ZoneId.of("Asia/Seoul")).toLocalDate()
             Members(
                 name = profile.subject,
-                birth = SimpleDateFormat("yyyy.MM.dd").parse(profile.data3),
+                birth = localDate,
                 profileImage = "$pledisFileBbsData${profile.bbsFile}"
             )
         }
@@ -83,15 +90,42 @@ class Fromis9Service(
         val pageable = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "release"))
         val albums = albumRepository.findAll(pageable).content.map { AlbumListDto(it.albumName, it.type, it.cover, it.release.format(formatter), it.colorMain, it.colorPrimary, it.colorSecondary) }
 
+        val weverseNotice = weverseNoticeRepository.findTop10ByOrderByDateDesc().map {
+            LatestNews(
+                it.noticeId,
+                it.title,
+                it.url,
+                it.date,
+                it.portal.portal,
+                it.portal.image
+            )
+        }
+
+        val dcinsidePosts = dcinsidePostRepository.findTop10ByOrderByDateDesc().map {
+            LatestNews(
+                it.liveId,
+                it.title,
+                it.url,
+                it.date,
+                it.portal.portal,
+                it.portal.image
+            )
+        }
+
+        val latestNews = (weverseNotice + dcinsidePosts)
+            .sortedByDescending { it.date }
+            .take(5)
+
         val fromis9Dto = Fromis9Dto(
             bannerImage = bannerImage,
             debut = debut,
             socials = socials,
             members = members,
-            albums = albums
+            albums = albums,
+            latestNews = latestNews
         )
 
-        return ResponseEntity.ok(fromis9Dto)
+        return ResponseEntity.status(HttpStatus.OK).body(fromis9Dto)
     }
 
     fun getMemberProfile(name: String) : ResponseEntity<MemberProfileDto> {
@@ -100,7 +134,7 @@ class Fromis9Service(
 
         val memberProfile = MemberProfileDto(
             name = member.name,
-            birth = SimpleDateFormat("yyyy.MM.dd").format(member.birth),
+            birth = member.birth,
             profileImage = member.profileImage,
             position = member.details?.position,
             instagram = member.details?.instagram

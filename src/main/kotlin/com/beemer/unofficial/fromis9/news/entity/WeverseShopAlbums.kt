@@ -1,4 +1,4 @@
-package com.beemer.unofficial.fromis9.album.entity
+package com.beemer.unofficial.fromis9.news.entity
 
 import jakarta.persistence.*
 

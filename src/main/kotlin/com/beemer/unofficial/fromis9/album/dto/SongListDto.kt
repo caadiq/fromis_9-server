@@ -6,5 +6,6 @@ data class SongListDto(
     val albumCover: String,
     val colorMain: String,
     val colorPrimary: String,
-    val colorSecondary: String
+    val colorSecondary: String,
+    val titleTrack: Boolean
 )
