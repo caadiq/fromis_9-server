@@ -56,6 +56,7 @@ class YouTubeService(
                 val thumbnail = item.snippet.thumbnails.run {
                     maxres?.url ?: medium?.url ?: high?.url ?: default.url
                 }
+                val channel = item.snippet.channelTitle
                 val publishedAt = Instant.ofEpochMilli(item.contentDetails.videoPublishedAt.value)
                     .atZone(ZoneId.of("UTC"))
                     .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
@@ -71,7 +72,7 @@ class YouTubeService(
                         platform,
                         publishedAt,
                         title,
-                        null,
+                        channel,
                         "https://www.youtube.com/watch?v=$videoId",
                         false
                     )
