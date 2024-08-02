@@ -40,9 +40,10 @@ class ScheduleController(private val scheduleService: ScheduleService) {
     @GetMapping("/schedules")
     fun getScheduleList(
         @RequestParam(required = false) year: Int?,
-        @RequestParam(required = false) month: Int?
+        @RequestParam(required = false) month: Int?,
+        @RequestBody(required = false) platform: List<String>?
     ) : ResponseEntity<List<ScheduleListDto>> {
-        return scheduleService.getScheduleList(year, month)
+        return scheduleService.getScheduleList(year, month, platform)
     }
 
     @GetMapping("/platforms")

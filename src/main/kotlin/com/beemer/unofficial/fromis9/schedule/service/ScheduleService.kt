@@ -84,12 +84,14 @@ class ScheduleService(
         return ResponseEntity.status(HttpStatus.OK).body(MessageDto("일정을 삭제했습니다."))
     }
 
-    fun getScheduleList(year: Int?, month: Int?) : ResponseEntity<List<ScheduleListDto>> {
+    fun getScheduleList(year: Int?, month: Int?, platform: List<String>?) : ResponseEntity<List<ScheduleListDto>> {
         val schedules = when {
             year == null && month == null -> scheduleRepository.findAll()
             year != null && month == null -> scheduleRepository.findByYear(year)
             year == null && month != null -> throw CustomException(ErrorCode.INVALID_PARAMETER)
             else -> scheduleRepository.findByYearAndMonth(year!!, month!!)
+        }.filter {
+            platform == null || platform.contains(it.platform.platform)
         }
 
         val scheduleList = schedules.map {
