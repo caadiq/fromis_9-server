@@ -37,11 +37,11 @@ class ScheduleController(private val scheduleService: ScheduleService) {
         return scheduleService.deleteSchedule(scheduleId, authorization)
     }
 
-    @GetMapping("/schedules")
+    @PostMapping("/schedules")
     fun getScheduleList(
         @RequestParam(required = false) year: Int?,
         @RequestParam(required = false) month: Int?,
-        @RequestBody(required = false) category: List<String>?
+        @RequestBody(required = false) category: List<String>
     ) : ResponseEntity<List<ScheduleListDto>> {
         return scheduleService.getScheduleList(year, month, category)
     }
