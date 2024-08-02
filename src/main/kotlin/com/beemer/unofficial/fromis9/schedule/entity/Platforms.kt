@@ -16,5 +16,9 @@ data class Platforms(
     val color: String,
 
     @OneToMany(mappedBy = "platform", cascade = [CascadeType.ALL])
-    val schedules: List<Schedules>
+    val schedules: List<Schedules>,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category")
+    val category: Category?
 )
