@@ -22,8 +22,8 @@ data class Songs(
     @Column(name = "arranger")
     val arranger: String?,
 
-    @Column(name = "lyrics", nullable = false)
-    val lyrics: String,
+    @Column(name = "lyrics")
+    val lyrics: String?,
 
     @Column(name = "fanchant")
     val fanchant: String?,
@@ -37,8 +37,8 @@ data class Songs(
     @Column(name = "track", nullable = false)
     val track: Int,
 
-    @Column(name = "video_id", nullable = false)
-    val videoId: String,
+    @Column(name = "video_id")
+    val videoId: String?,
 
     @Column(name = "fanchant_video_id")
     val fanchantVideoId: String?
