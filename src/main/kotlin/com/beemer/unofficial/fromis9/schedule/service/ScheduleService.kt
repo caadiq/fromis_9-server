@@ -7,6 +7,7 @@ import com.beemer.unofficial.fromis9.schedule.dto.PlatformListDto
 import com.beemer.unofficial.fromis9.schedule.dto.ScheduleDto
 import com.beemer.unofficial.fromis9.schedule.dto.ScheduleListDto
 import com.beemer.unofficial.fromis9.schedule.entity.Schedules
+import com.beemer.unofficial.fromis9.schedule.repository.CategoryRepository
 import com.beemer.unofficial.fromis9.schedule.repository.PlatformRepository
 import com.beemer.unofficial.fromis9.schedule.repository.ScheduleRepository
 import jakarta.transaction.Transactional
@@ -18,7 +19,8 @@ import org.springframework.stereotype.Service
 @Service
 class ScheduleService(
     private val scheduleRepository: ScheduleRepository,
-    private val platformRepository: PlatformRepository
+    private val platformRepository: PlatformRepository,
+    private val categoryRepository: CategoryRepository
 ) {
     @Value("\${admin.token}")
     private lateinit var adminToken: String
@@ -123,5 +125,15 @@ class ScheduleService(
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(platformList)
+    }
+
+    fun getCategoryList() : ResponseEntity<List<String>> {
+        val categories = categoryRepository.findAll()
+
+        val categoryList = categories.map {
+            it.category
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(categoryList)
     }
 }

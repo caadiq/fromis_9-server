@@ -50,4 +50,9 @@ class ScheduleController(private val scheduleService: ScheduleService) {
     fun getPlatformList() : ResponseEntity<List<PlatformListDto>> {
         return scheduleService.getPlatformList()
     }
+
+    @GetMapping("/categories")
+    fun getCategoryList() : ResponseEntity<List<String>> {
+        return scheduleService.getCategoryList()
+    }
 }
