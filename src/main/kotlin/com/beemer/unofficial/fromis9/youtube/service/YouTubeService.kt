@@ -50,43 +50,45 @@ class YouTubeService(
         do {
             val response = getPlayListVideos(playlistId, nextPageToken)
 
-            val youTubeVideosList = response.items.map { item ->
-                val videoId = item.contentDetails.videoId
-                val title = item.snippet.title
-                val thumbnail = item.snippet.thumbnails.run {
-                    maxres?.url ?: medium?.url ?: high?.url ?: default.url
-                }
-                val channel = item.snippet.channelTitle
-                val publishedAt = Instant.ofEpochMilli(item.contentDetails.videoPublishedAt.value)
-                    .atZone(ZoneId.of("UTC"))
-                    .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
-                    .toLocalDateTime()
-                val description = item.snippet.description
+            val youTubeVideosList = response.items
+                .filter { it.id != "YKK2BxK9ESQ" }
+                .map { item ->
+                    val videoId = item.contentDetails.videoId
+                    val title = item.snippet.title
+                    val thumbnail = item.snippet.thumbnails.run {
+                        maxres?.url ?: medium?.url ?: high?.url ?: default.url
+                    }
+                    val channel = item.snippet.channelTitle
+                    val publishedAt = Instant.ofEpochMilli(item.contentDetails.videoPublishedAt.value)
+                        .atZone(ZoneId.of("UTC"))
+                        .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+                        .toLocalDateTime()
+                    val description = item.snippet.description
 
-                val schedule = scheduleRepository.findBySchedule(title)
-                    .orElse(null)
-                val platform = platformRepository.findById("youtube")
-                    .orElseThrow { CustomException(ErrorCode.PLATFORM_NOT_FOUND) }
-                if (schedule == null) {
-                    val newSchedule = Schedules(
-                        platform,
-                        publishedAt,
+                    val schedule = scheduleRepository.findBySchedule(title)
+                        .orElse(null)
+                    val platform = platformRepository.findById("youtube")
+                        .orElseThrow { CustomException(ErrorCode.PLATFORM_NOT_FOUND) }
+                    if (schedule == null) {
+                        val newSchedule = Schedules(
+                            platform,
+                            publishedAt,
+                            title,
+                            channel,
+                            "https://www.youtube.com/watch?v=$videoId",
+                            false
+                        )
+                        scheduleRepository.save(newSchedule)
+                    }
+
+                    YouTubeVideos(
+                        videoId,
                         title,
-                        channel,
-                        "https://www.youtube.com/watch?v=$videoId",
-                        false
+                        thumbnail,
+                        publishedAt,
+                        description
                     )
-                    scheduleRepository.save(newSchedule)
                 }
-
-                YouTubeVideos(
-                    videoId,
-                    title,
-                    thumbnail,
-                    publishedAt,
-                    description
-                )
-            }
 
             youTubeVideoList.addAll(youTubeVideosList)
 
