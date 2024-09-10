@@ -3,15 +3,15 @@ package com.beemer.unofficial.fromis9.schedule.service
 import com.beemer.unofficial.fromis9.common.dto.MessageDto
 import com.beemer.unofficial.fromis9.common.exception.CustomException
 import com.beemer.unofficial.fromis9.common.exception.ErrorCode
-import com.beemer.unofficial.fromis9.schedule.dto.PlatformListDto
-import com.beemer.unofficial.fromis9.schedule.dto.ScheduleDto
-import com.beemer.unofficial.fromis9.schedule.dto.ScheduleListDto
+import com.beemer.unofficial.fromis9.schedule.dto.*
 import com.beemer.unofficial.fromis9.schedule.entity.Schedules
 import com.beemer.unofficial.fromis9.schedule.repository.CategoryRepository
 import com.beemer.unofficial.fromis9.schedule.repository.PlatformRepository
 import com.beemer.unofficial.fromis9.schedule.repository.ScheduleRepository
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -86,7 +86,7 @@ class ScheduleService(
         return ResponseEntity.status(HttpStatus.OK).body(MessageDto("일정을 삭제했습니다."))
     }
 
-    fun getScheduleList(year: Int?, month: Int?, category: List<String>) : ResponseEntity<List<ScheduleListDto>> {
+    fun getScheduleList(year: Int?, month: Int?, category: List<String>) : ResponseEntity<List<ScheduleDetailsDto>> {
         val schedules = when {
             year == null && month == null -> scheduleRepository.findAll()
             year != null && month == null -> scheduleRepository.findByYear(year)
@@ -97,7 +97,7 @@ class ScheduleService(
         }
 
         val scheduleList = schedules.map {
-            ScheduleListDto(
+            ScheduleDetailsDto(
                 it.scheduleId,
                 it.platform.platform,
                 it.platform.image,
@@ -111,6 +111,39 @@ class ScheduleService(
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(scheduleList)
+    }
+
+    fun getScheduleListBySchedule(page: Int, limit: Int, query: String) : ResponseEntity<ScheduleListDto> {
+        val limitAdjusted = 1.coerceAtLeast(50.coerceAtMost(limit))
+        val pageable = PageRequest.of(page, limitAdjusted, Sort.by("date").descending())
+        
+        val schedules = scheduleRepository.findByScheduleAndDescription(pageable, query)
+
+        if (schedules.content.isEmpty() && schedules.totalElements > 0) {
+            throw CustomException(ErrorCode.SCHEDULE_NOT_FOUND)
+        }
+
+        val prevPage = if (schedules.hasPrevious()) schedules.number - 1 else null
+        val currentPage = schedules.number
+        val nextPage = if (schedules.hasNext()) schedules.number + 1 else null
+
+        val pages = SchedulePageDto(prevPage, currentPage, nextPage)
+
+        val scheduleList = schedules.content.map {
+            ScheduleDetailsDto(
+                it.scheduleId,
+                it.platform.platform,
+                it.platform.image,
+                it.platform.color,
+                it.date,
+                it.schedule,
+                it.description,
+                it.url,
+                it.allDay
+            )
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(ScheduleListDto(pages, scheduleList))
     }
 
     fun getPlatformList() : ResponseEntity<List<PlatformListDto>> {

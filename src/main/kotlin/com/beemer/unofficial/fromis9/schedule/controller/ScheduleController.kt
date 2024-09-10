@@ -2,6 +2,7 @@ package com.beemer.unofficial.fromis9.schedule.controller
 
 import com.beemer.unofficial.fromis9.common.dto.MessageDto
 import com.beemer.unofficial.fromis9.schedule.dto.PlatformListDto
+import com.beemer.unofficial.fromis9.schedule.dto.ScheduleDetailsDto
 import com.beemer.unofficial.fromis9.schedule.dto.ScheduleDto
 import com.beemer.unofficial.fromis9.schedule.dto.ScheduleListDto
 import com.beemer.unofficial.fromis9.schedule.service.ScheduleService
@@ -42,8 +43,17 @@ class ScheduleController(private val scheduleService: ScheduleService) {
         @RequestParam(required = false) year: Int?,
         @RequestParam(required = false) month: Int?,
         @RequestBody(required = false) category: List<String>
-    ) : ResponseEntity<List<ScheduleListDto>> {
+    ) : ResponseEntity<List<ScheduleDetailsDto>> {
         return scheduleService.getScheduleList(year, month, category)
+    }
+
+    @PostMapping("/schedules/search")
+    fun getScheduleListBySchedule(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") limit: Int,
+        @RequestParam query: String
+    ) : ResponseEntity<ScheduleListDto> {
+        return scheduleService.getScheduleListBySchedule(page, limit, query)
     }
 
     @GetMapping("/platforms")
