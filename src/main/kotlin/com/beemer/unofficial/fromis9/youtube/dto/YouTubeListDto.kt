@@ -18,6 +18,7 @@ data class YouTubeDto(
     val title: String,
     val thumbnail: String,
     val publishedAt: LocalDateTime,
+    val isNew: Boolean,
     val description: String,
     val length: Int?,
     val views: Int?

@@ -120,6 +120,7 @@ class YouTubeService(
                 it.title,
                 it.thumbnail,
                 it.publishedAt,
+                it.publishedAt.isAfter(Instant.now().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime().minusDays(7)),
                 it.description,
                 it.details?.length,
                 it.details?.views
