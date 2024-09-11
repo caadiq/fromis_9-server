@@ -35,6 +35,7 @@ enum class ErrorCode(
     PORTAL_NOT_FOUND(HttpStatus.NOT_FOUND, "포털이 존재하지 않습니다."),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "멤버가 존재하지 않습니다."),
+    FCM_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "FCM 토큰이 존재하지 않습니다."),
 
 
     /**
@@ -42,4 +43,5 @@ enum class ErrorCode(
      * 서버에 오류가 발생했을 때 발생하는 에러 코드
      * ex) 서버에서 처리되지 않은 예외가 발생했을 때
      */
+    FCM_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "FCM 메시지 전송에 실패했습니다."),
 }
