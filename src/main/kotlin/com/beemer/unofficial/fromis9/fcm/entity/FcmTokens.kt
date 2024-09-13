@@ -1,9 +1,6 @@
 package com.beemer.unofficial.fromis9.fcm.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "FcmTokens")
@@ -13,5 +10,8 @@ data class FcmTokens(
     val ssaid: String,
 
     @Column(name = "token", nullable = false)
-    val token: String
+    val token: String,
+
+    @OneToOne(mappedBy = "fcmToken", cascade = [CascadeType.ALL])
+    var notiSettings: NotiSettings? = null
 )

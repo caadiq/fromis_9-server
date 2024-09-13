@@ -1,6 +1,7 @@
 package com.beemer.unofficial.fromis9.fcm.controller
 
 import com.beemer.unofficial.fromis9.common.dto.MessageDto
+import com.beemer.unofficial.fromis9.fcm.dto.FcmNotiDto
 import com.beemer.unofficial.fromis9.fcm.dto.FcmSendDto
 import com.beemer.unofficial.fromis9.fcm.dto.FcmTokenDto
 import com.beemer.unofficial.fromis9.fcm.service.FcmService
@@ -27,5 +28,12 @@ class FcmController(
         @RequestBody dto: FcmSendDto
     ) : ResponseEntity<MessageDto> {
         return fcmService.sendMessage(dto)
+    }
+
+    @PostMapping("/fcm/noti/membertime")
+    fun setMemberTime(
+        @RequestBody dto: FcmNotiDto
+    ) : ResponseEntity<MessageDto> {
+        return fcmService.setMemberTime(dto)
     }
 }

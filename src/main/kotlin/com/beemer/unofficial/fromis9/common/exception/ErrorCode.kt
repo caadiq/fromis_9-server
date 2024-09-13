@@ -35,7 +35,7 @@ enum class ErrorCode(
     PORTAL_NOT_FOUND(HttpStatus.NOT_FOUND, "포털이 존재하지 않습니다."),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "멤버가 존재하지 않습니다."),
-    FCM_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "FCM 토큰이 존재하지 않습니다."),
+    SSAID_NOT_FOUND(HttpStatus.NOT_FOUND, "SSAID가 존재하지 않습니다."),
 
 
     /**
