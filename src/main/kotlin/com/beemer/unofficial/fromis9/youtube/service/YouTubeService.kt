@@ -1,5 +1,6 @@
 package com.beemer.unofficial.fromis9.youtube.service
 
+import com.beemer.unofficial.fromis9.common.dto.MessageDto
 import com.beemer.unofficial.fromis9.common.exception.CustomException
 import com.beemer.unofficial.fromis9.common.exception.ErrorCode
 import com.beemer.unofficial.fromis9.schedule.entity.Schedules
@@ -41,6 +42,11 @@ class YouTubeService(
 
     @Value("\${fast.api.url}")
     private lateinit var fastApiUrl: String
+
+    private val gsonFactory = GsonFactory.getDefaultInstance()
+    val youtube = YouTube.Builder(NetHttpTransport(), gsonFactory) { }
+        .setApplicationName("YoutubeVideoFetcher")
+        .build()
 
     @Transactional
     fun fetchYouTubePlaylist(playlistId: String) {
@@ -131,15 +137,6 @@ class YouTubeService(
     }
 
     private fun getPlayListVideos(playlistId: String, pageToken: String?): PlaylistItemListResponse {
-        val gsonFactory = GsonFactory.getDefaultInstance()
-
-        val youtube = YouTube.Builder(
-            NetHttpTransport(),
-            gsonFactory
-        ) { }
-            .setApplicationName("Fromis9VideoListFetcher")
-            .build()
-
         val request = youtube.playlistItems().list(listOf("snippet", "contentDetails")).apply {
             key = apiKey
             this.playlistId = playlistId
@@ -183,5 +180,45 @@ class YouTubeService(
         video.details = details
 
         youTubeVideoRepository.save(video)
+    }
+
+    @Transactional
+    fun fetchYoutubeVideo(videoId: String) : ResponseEntity<MessageDto> {
+        val url = "https://www.youtube.com/watch?v=$videoId"
+
+        if (scheduleRepository.existsByUrl(url)) {
+            throw CustomException(ErrorCode.VIDEO_ALREADY_EXISTS)
+        }
+
+        val request = youtube.videos().list(listOf("snippet", "contentDetails")).apply {
+            key = apiKey
+            this.id = listOf(videoId)
+        }
+
+        request.execute().items[0].let {
+            val title = it.snippet.title
+            val publishedAt = Instant.ofEpochMilli(it.snippet.publishedAt.value)
+                .atZone(ZoneId.of("UTC"))
+                .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+                .toLocalDateTime()
+
+            val schedule = scheduleRepository.findBySchedule(title)
+                .orElse(null)
+            val platform = platformRepository.findById("youtube")
+                .orElseThrow { CustomException(ErrorCode.PLATFORM_NOT_FOUND) }
+            if (schedule == null) {
+                val newSchedule = Schedules(
+                    platform,
+                    publishedAt,
+                    title,
+                    it.snippet.channelTitle,
+                    "https://www.youtube.com/watch?v=$videoId",
+                    false
+                )
+                scheduleRepository.save(newSchedule)
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(MessageDto("영상이 추가되었습니다."))
     }
 }

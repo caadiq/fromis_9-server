@@ -23,4 +23,6 @@ interface ScheduleRepository : JpaRepository<Schedules, Int> {
     fun findByScheduleAndDescription(pageable: Pageable, query: String): Page<Schedules>
 
     fun existsByDateAndSchedule(date: LocalDateTime, schedule: String): Boolean
+
+    fun existsByUrl(url: String): Boolean
 }

@@ -39,6 +39,14 @@ enum class ErrorCode(
 
 
     /**
+     * 409 Conflict
+     * 클라이언트의 요청이 서버의 상태와 충돌이 발생했을 때 발생하는 에러 코드
+     * ex) 이미 존재하는 데이터를 생성하려고 할 때
+     */
+    VIDEO_ALREADY_EXISTS(HttpStatus.CONFLICT, "영상이 이미 존재합니다."),
+
+
+    /**
      * 500 Internal Server Error
      * 서버에 오류가 발생했을 때 발생하는 에러 코드
      * ex) 서버에서 처리되지 않은 예외가 발생했을 때
