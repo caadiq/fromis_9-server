@@ -9,7 +9,6 @@ import com.beemer.unofficial.fromis9.schedule.repository.CategoryRepository
 import com.beemer.unofficial.fromis9.schedule.repository.PlatformRepository
 import com.beemer.unofficial.fromis9.schedule.repository.ScheduleRepository
 import jakarta.transaction.Transactional
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
@@ -22,15 +21,8 @@ class ScheduleService(
     private val platformRepository: PlatformRepository,
     private val categoryRepository: CategoryRepository
 ) {
-    @Value("\${admin.token}")
-    private lateinit var adminToken: String
-
     @Transactional
-    fun addSchedule(token: String, dto: ScheduleDto) : ResponseEntity<MessageDto> {
-        if (token != adminToken) {
-            throw CustomException(ErrorCode.UNAUTHORIZED)
-        }
-
+    fun addSchedule(dto: ScheduleDto) : ResponseEntity<MessageDto> {
         val platform = platformRepository.findById(dto.platform)
             .orElseThrow { CustomException(ErrorCode.PLATFORM_NOT_FOUND) }
 
@@ -49,11 +41,7 @@ class ScheduleService(
     }
 
     @Transactional
-    fun updateSchedule(scheduleId: Int, token: String, dto: ScheduleDto) : ResponseEntity<MessageDto> {
-        if (token != adminToken) {
-            throw CustomException(ErrorCode.UNAUTHORIZED)
-        }
-
+    fun updateSchedule(scheduleId: Int, dto: ScheduleDto) : ResponseEntity<MessageDto> {
         val schedule = scheduleRepository.findById(scheduleId)
             .orElseThrow { CustomException(ErrorCode.SCHEDULE_NOT_FOUND) }
 
@@ -73,11 +61,7 @@ class ScheduleService(
     }
 
     @Transactional
-    fun deleteSchedule(scheduleId: Int, token: String) : ResponseEntity<MessageDto> {
-        if (token != adminToken) {
-            throw CustomException(ErrorCode.UNAUTHORIZED)
-        }
-
+    fun deleteSchedule(scheduleId: Int) : ResponseEntity<MessageDto> {
         val schedule = scheduleRepository.findById(scheduleId)
             .orElseThrow { CustomException(ErrorCode.SCHEDULE_NOT_FOUND) }
 

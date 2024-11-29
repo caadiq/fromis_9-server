@@ -8,12 +8,10 @@ import com.beemer.unofficial.fromis9.schedule.repository.PlatformRepository
 import com.beemer.unofficial.fromis9.schedule.repository.ScheduleRepository
 import com.beemer.unofficial.fromis9.youtube.dto.*
 import com.beemer.unofficial.fromis9.youtube.entity.YouTubeVideoDetails
-import com.beemer.unofficial.fromis9.youtube.entity.YouTubeVideos
 import com.beemer.unofficial.fromis9.youtube.repository.YouTubeVideoRepository
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.youtube.YouTube
-import com.google.api.services.youtube.model.PlaylistItemListResponse
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
@@ -24,11 +22,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import java.time.Instant
 import java.time.ZoneId
-
-enum class YouTubeChannel(val playlistId: String) {
-    FROMIS_9("UU8qO5racajmy4YgPgNJkVXg"),
-    HYBE_LABELS("PL_Cqw69_m_yyAZ1QABPigf6hqpSzMYsBT"),
-}
 
 @Service
 class YouTubeService(
@@ -47,62 +40,6 @@ class YouTubeService(
     val youtube = YouTube.Builder(NetHttpTransport(), gsonFactory) { }
         .setApplicationName("YoutubeVideoFetcher")
         .build()
-
-    @Transactional
-    fun fetchYouTubePlaylist(playlistId: String) {
-        var nextPageToken: String? = null
-        val youTubeVideoList = mutableListOf<YouTubeVideos>()
-
-        do {
-            val response = getPlayListVideos(playlistId, nextPageToken)
-
-            val youTubeVideosList = response.items
-                .filter { it.id != "YKK2BxK9ESQ" }
-                .map { item ->
-                    val videoId = item.contentDetails.videoId
-                    val title = item.snippet.title
-                    val thumbnail = item.snippet.thumbnails.run {
-                        maxres?.url ?: medium?.url ?: high?.url ?: default.url
-                    }
-                    val channel = item.snippet.channelTitle
-                    val publishedAt = Instant.ofEpochMilli(item.contentDetails.videoPublishedAt.value)
-                        .atZone(ZoneId.of("UTC"))
-                        .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
-                        .toLocalDateTime()
-                    val description = item.snippet.description
-
-                    val schedule = scheduleRepository.findBySchedule(title)
-                        .orElse(null)
-                    val platform = platformRepository.findById("youtube")
-                        .orElseThrow { CustomException(ErrorCode.PLATFORM_NOT_FOUND) }
-                    if (schedule == null) {
-                        val newSchedule = Schedules(
-                            platform,
-                            publishedAt,
-                            title,
-                            channel,
-                            "https://www.youtube.com/watch?v=$videoId",
-                            false
-                        )
-                        scheduleRepository.save(newSchedule)
-                    }
-
-                    YouTubeVideos(
-                        videoId,
-                        title,
-                        thumbnail,
-                        publishedAt,
-                        description
-                    )
-                }
-
-            youTubeVideoList.addAll(youTubeVideosList)
-
-            nextPageToken = response.nextPageToken
-        } while (!nextPageToken.isNullOrEmpty())
-
-        youTubeVideoRepository.saveAll(youTubeVideoList)
-    }
 
     fun getVideoList(playlist: String?, page: Int, limit: Int, query: String?) : ResponseEntity<YouTubeListDto> {
         val limitAdjusted = 1.coerceAtLeast(50.coerceAtMost(limit))
@@ -134,20 +71,6 @@ class YouTubeService(
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(YouTubeListDto(pages, videos))
-    }
-
-    private fun getPlayListVideos(playlistId: String, pageToken: String?): PlaylistItemListResponse {
-        val request = youtube.playlistItems().list(listOf("snippet", "contentDetails")).apply {
-            key = apiKey
-            this.playlistId = playlistId
-            maxResults = 50
-        }
-
-        if (!pageToken.isNullOrEmpty()) {
-            request.pageToken = pageToken
-        }
-
-        return request.execute()
     }
 
     @Transactional

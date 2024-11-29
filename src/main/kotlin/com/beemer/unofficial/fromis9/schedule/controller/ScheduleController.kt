@@ -15,27 +15,24 @@ class ScheduleController(private val scheduleService: ScheduleService) {
 
     @PostMapping("/schedule")
     fun addSchedule(
-        @RequestHeader(value = "Authorization") authorization: String,
         @RequestBody dto: ScheduleDto
     ) : ResponseEntity<MessageDto> {
-        return scheduleService.addSchedule(authorization, dto)
+        return scheduleService.addSchedule(dto)
     }
 
     @PutMapping("/schedule/{scheduleId}")
     fun updateSchedule(
         @PathVariable scheduleId: Int,
-        @RequestHeader(value = "Authorization") authorization: String,
         @RequestBody dto: ScheduleDto
     ) : ResponseEntity<MessageDto> {
-        return scheduleService.updateSchedule(scheduleId, authorization, dto)
+        return scheduleService.updateSchedule(scheduleId, dto)
     }
 
     @DeleteMapping("/schedule/{scheduleId}")
     fun deleteSchedule(
-        @PathVariable scheduleId: Int,
-        @RequestHeader(value = "Authorization") authorization: String
+        @PathVariable scheduleId: Int
     ) : ResponseEntity<MessageDto> {
-        return scheduleService.deleteSchedule(scheduleId, authorization)
+        return scheduleService.deleteSchedule(scheduleId)
     }
 
     @PostMapping("/schedules")
