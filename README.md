@@ -1,12 +1,12 @@
-# fromis_9 server
+# fromis_9
 
-프로미스나인 안드로이드 앱 서버
+fromis_9 안드로이드 앱 서버
 
 </br>
 
 ## 프로젝트 소개
 
-[프로미스나인 안드로이드 앱](https://github.com/caadiq/fromis_9-android-app) 서버입니다.
+[fromis_9 안드로이드 앱](https://github.com/caadiq/fromis_9-android-app) 서버입니다.
 
 </br>
 
