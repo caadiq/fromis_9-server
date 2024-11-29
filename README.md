@@ -6,8 +6,6 @@
 
 ## 프로젝트 소개
 
-프로미스나인 팬 메이드 안드로이드 앱 서버입니다.
-
 [프로미스나인 안드로이드 앱](https://github.com/caadiq/fromis_9-android-app) 서버입니다.
 
 </br>
