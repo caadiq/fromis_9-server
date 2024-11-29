@@ -2,6 +2,7 @@ package com.beemer.unofficial.fromis9.schedule.controller
 
 import com.beemer.unofficial.fromis9.common.dto.MessageDto
 import com.beemer.unofficial.fromis9.schedule.dto.PlatformListDto
+import com.beemer.unofficial.fromis9.schedule.dto.ScheduleDetailsDto
 import com.beemer.unofficial.fromis9.schedule.dto.ScheduleDto
 import com.beemer.unofficial.fromis9.schedule.dto.ScheduleListDto
 import com.beemer.unofficial.fromis9.schedule.service.ScheduleService
@@ -14,39 +15,51 @@ class ScheduleController(private val scheduleService: ScheduleService) {
 
     @PostMapping("/schedule")
     fun addSchedule(
-        @RequestHeader(value = "Authorization") authorization: String,
         @RequestBody dto: ScheduleDto
     ) : ResponseEntity<MessageDto> {
-        return scheduleService.addSchedule(authorization, dto)
+        return scheduleService.addSchedule(dto)
     }
 
     @PutMapping("/schedule/{scheduleId}")
     fun updateSchedule(
         @PathVariable scheduleId: Int,
-        @RequestHeader(value = "Authorization") authorization: String,
         @RequestBody dto: ScheduleDto
     ) : ResponseEntity<MessageDto> {
-        return scheduleService.updateSchedule(scheduleId, authorization, dto)
+        return scheduleService.updateSchedule(scheduleId, dto)
     }
 
     @DeleteMapping("/schedule/{scheduleId}")
     fun deleteSchedule(
-        @PathVariable scheduleId: Int,
-        @RequestHeader(value = "Authorization") authorization: String
+        @PathVariable scheduleId: Int
     ) : ResponseEntity<MessageDto> {
-        return scheduleService.deleteSchedule(scheduleId, authorization)
+        return scheduleService.deleteSchedule(scheduleId)
     }
 
-    @GetMapping("/schedules")
+    @PostMapping("/schedules")
     fun getScheduleList(
         @RequestParam(required = false) year: Int?,
-        @RequestParam(required = false) month: Int?
-    ) : ResponseEntity<List<ScheduleListDto>> {
-        return scheduleService.getScheduleList(year, month)
+        @RequestParam(required = false) month: Int?,
+        @RequestBody(required = false) category: List<String>
+    ) : ResponseEntity<List<ScheduleDetailsDto>> {
+        return scheduleService.getScheduleList(year, month, category)
+    }
+
+    @PostMapping("/schedules/search")
+    fun getScheduleListBySchedule(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") limit: Int,
+        @RequestParam query: String
+    ) : ResponseEntity<ScheduleListDto> {
+        return scheduleService.getScheduleListBySchedule(page, limit, query)
     }
 
     @GetMapping("/platforms")
     fun getPlatformList() : ResponseEntity<List<PlatformListDto>> {
         return scheduleService.getPlatformList()
+    }
+
+    @GetMapping("/categories")
+    fun getCategoryList() : ResponseEntity<List<String>> {
+        return scheduleService.getCategoryList()
     }
 }

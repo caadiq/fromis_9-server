@@ -35,6 +35,15 @@ enum class ErrorCode(
     PORTAL_NOT_FOUND(HttpStatus.NOT_FOUND, "포털이 존재하지 않습니다."),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "멤버가 존재하지 않습니다."),
+    SSAID_NOT_FOUND(HttpStatus.NOT_FOUND, "SSAID가 존재하지 않습니다."),
+
+
+    /**
+     * 409 Conflict
+     * 클라이언트의 요청이 서버의 상태와 충돌이 발생했을 때 발생하는 에러 코드
+     * ex) 이미 존재하는 데이터를 생성하려고 할 때
+     */
+    VIDEO_ALREADY_EXISTS(HttpStatus.CONFLICT, "영상이 이미 존재합니다."),
 
 
     /**
@@ -42,4 +51,5 @@ enum class ErrorCode(
      * 서버에 오류가 발생했을 때 발생하는 에러 코드
      * ex) 서버에서 처리되지 않은 예외가 발생했을 때
      */
+    FCM_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "FCM 메시지 전송에 실패했습니다."),
 }

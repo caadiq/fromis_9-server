@@ -13,6 +13,9 @@ data class AppVersion(
     @Column(name = "release", nullable = false)
     val date: LocalDate,
 
+    @Column(name = "apk")
+    val apk: String,
+
     @OneToMany(mappedBy = "appVersion", cascade = [CascadeType.ALL])
     val changelogs: List<Changelog>
 )

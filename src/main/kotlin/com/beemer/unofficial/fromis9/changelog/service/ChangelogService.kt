@@ -33,6 +33,6 @@ class ChangelogService(
 
     fun getLatestVersion() : ResponseEntity<LatestVersionDto> {
         val latestVersion = appVersionRepository.findTopByOrderByDateDesc()
-        return ResponseEntity.status(HttpStatus.OK).body(LatestVersionDto(latestVersion.version))
+        return ResponseEntity.status(HttpStatus.OK).body(LatestVersionDto(latestVersion.version, latestVersion.apk))
     }
 }
