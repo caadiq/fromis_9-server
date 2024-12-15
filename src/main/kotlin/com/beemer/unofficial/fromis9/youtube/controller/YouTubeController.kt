@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/fromis9/video")
+@RequestMapping("/video")
 class YouTubeController(private val youTubeService: YouTubeService) {
 
     @GetMapping("/list")

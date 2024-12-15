@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/fromis9/album")
+@RequestMapping("/album")
 class AlbumController(private val albumService: AlbumService) {
 
     @GetMapping("/list")

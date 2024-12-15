@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/fromis9/changelog/")
+@RequestMapping("/changelog/")
 class ChangelogController(private val changelogService: ChangelogService) {
 
     @GetMapping("/list")

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/fromis9/")
 class Fromis9Controller(private val fromis9Service: Fromis9Service) {
 
     @GetMapping("/fromis9")

@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/fromis9/")
 class ScheduleController(private val scheduleService: ScheduleService) {
 
     @PostMapping("/schedule")
