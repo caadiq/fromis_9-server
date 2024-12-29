@@ -21,11 +21,13 @@ pipeline {
             }
         }
 
-       steps {
-           sh '''
-               docker exec fromis_9-springboot rm -f /app/fromis_9.jar
-               docker cp /var/jenkins_home/workspace/fromis_9/build/libs/fromis_9-1.0.0.jar fromis_9-springboot:/app/fromis_9.jar
-           '''
+       stage('Copy JAR') {
+           steps {
+               sh '''
+                   docker exec fromis_9-springboot rm -f /app/fromis_9.jar
+                   docker cp /var/jenkins_home/workspace/fromis_9/build/libs/fromis_9-1.0.0.jar fromis_9-springboot:/app/fromis_9.jar
+               '''
+           }
        }
 
         stage('Restart Container') {
