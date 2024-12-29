@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 @Component
 class YouTubeScheduler(private val youtubeService: YouTubeService) {
 
-    @Scheduled(fixedDelay = 1000 * 60 * 5)
+    @Scheduled(cron = "0 0,10,20,30,40,50 * * * *")
     fun getVideoDetails() {
         youtubeService.getVideoDetails()
     }

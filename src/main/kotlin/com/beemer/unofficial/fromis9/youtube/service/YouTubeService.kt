@@ -14,7 +14,6 @@ import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.youtube.YouTube
 import jakarta.transaction.Transactional
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -37,8 +36,6 @@ class YouTubeService(
 
     @Value("\${fast.api.url}")
     private lateinit var fastApiUrl: String
-
-    private val logger = LoggerFactory.getLogger(YouTubeService::class.java)
 
     private val gsonFactory = GsonFactory.getDefaultInstance()
     val youtube = YouTube.Builder(NetHttpTransport(), gsonFactory) { }
@@ -85,8 +82,6 @@ class YouTubeService(
             VideoDetailsRequestDto(it.videoId)
         }
 
-        logger.info("영상 상세 정보 요청 : $videoList")
-
         webClient.post()
             .uri(url)
             .bodyValue(videoList)
@@ -107,8 +102,6 @@ class YouTubeService(
         )
 
         video.details = details
-
-        logger.info("영상 상세 정보 : ${dto.videoId}: 영상 길이(${dto.length}), 조회수(${dto.views})")
 
         youTubeVideoRepository.save(video)
     }
