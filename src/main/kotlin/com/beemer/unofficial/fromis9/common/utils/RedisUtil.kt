@@ -1,11 +1,11 @@
 package com.beemer.unofficial.fromis9.common.utils
 
-import org.springframework.data.redis.core.StringRedisTemplate
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
 
 @Component
 class RedisUtil(
-    private val redisTemplate: StringRedisTemplate
+    private val redisTemplate: RedisTemplate<String, String>
 ) {
     fun getData(key: String): String? {
         val valueOperations = redisTemplate.opsForValue()
