@@ -85,6 +85,8 @@ class YouTubeService(
             VideoDetailsRequestDto(it.videoId)
         }
 
+        logger.info("영상 상세 정보 요청 : $videoList")
+
         webClient.post()
             .uri(url)
             .bodyValue(videoList)

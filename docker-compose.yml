@@ -4,8 +4,6 @@ services:
     container_name: fromis_9-springboot
     expose:
       - "8080"
-    volumes:
-      - /var/jenkins_home/workspace/fromis_9/build/libs:/app
     working_dir: /app
     entrypoint: ["java", "-jar", "fromis_9.jar"]
     environment:
