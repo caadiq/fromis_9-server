@@ -1,7 +1,7 @@
 services:
   springboot:
     image: openjdk:20-jdk-slim
-    container_name: seoulbike-springboot
+    container_name: fromis_9-springboot
     expose:
       - "8080"
     working_dir: /app
