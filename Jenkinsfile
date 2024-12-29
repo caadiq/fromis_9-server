@@ -23,24 +23,13 @@ pipeline {
 
         stage('Copy JAR') {
             steps {
-                sh 'docker cp /var/jenkins_home/workspace/fromis_9/build/libs/fromis_9-1.0.0.jar fromis_9-springboot:/app/fromis_9.jar'
+                sh 'mv /var/jenkins_home/workspace/fromis_9/build/libs/fromis_9-1.0.0.jar /var/jenkins_home/workspace/fromis_9/build/libs/fromis_9.jar'
             }
         }
 
-//         stage('Restart Container') {
-//             steps {
-//                 sh 'docker restart fromis_9-springboot'
-//             }
-//         }
-
-        stage('Deploy Container') {
+        stage('Restart Container') {
             steps {
-                script {
-                    dir('/var/jenkins_home/workspace/fromis_9') {
-                        sh 'docker-compose down'
-                        sh 'docker-compose up -d'
-                    }
-                }
+                sh 'docker restart fromis_9-springboot'
             }
         }
     }
